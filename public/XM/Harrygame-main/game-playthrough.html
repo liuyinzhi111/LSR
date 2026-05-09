@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>失色纪·修钟人 — 双轮游戏解说</title>
+<link rel="preconnect" href="https://fonts.loli.net">
+<link href="https://fonts.loli.net/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0C0916;
+  --surface:   #13102090;
+  --card:      #1A162888;
+  --gold:      #C4A35A;
+  --red:       #C2452D;
+  --blue:      #5A8FC4;
+  --green:     #6A9A5A;
+  --text:      #E8DFD0;
+  --muted:     rgba(232,223,208,0.52);
+  --parchment: #F0E6C8;
+  --border:    rgba(196,163,90,0.2);
+  /* 失败主色 */
+  --fail-hue:  #7A8A9A;
+  --fail-bg:   rgba(40,50,65,0.5);
+  --fail-border: rgba(100,130,160,0.35);
+  /* 通关主色 */
+  --win-hue:   #C4A35A;
+  --win-bg:    rgba(60,48,28,0.5);
+  --win-border: rgba(196,163,90,0.4);
+}
+
+html { font-size: 10.5pt; }
+
+body {
+  font-family: 'ZCOOL XiaoWei', 'STKaiti', serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.85;
+}
+
+/* ══ 打印配色 ══ */
+@media print {
+  :root {
+    --bg:        #F8F0E0;
+    --surface:   #EDE0C4;
+    --card:      #E5D5AA;
+    --gold:      #8B6520;
+    --red:       #922A1A;
+    --blue:      #2A5A8A;
+    --green:     #3A6A2A;
+    --text:      #1A1020;
+    --muted:     rgba(26,16,32,0.52);
+    --parchment: #1A1020;
+    --border:    rgba(80,50,10,0.22);
+    --fail-hue:  #4A5A6A;
+    --fail-bg:   rgba(180,200,220,0.25);
+    --fail-border: rgba(70,100,130,0.3);
+    --win-hue:   #7A5518;
+    --win-bg:    rgba(220,195,140,0.3);
+    --win-border: rgba(139,101,32,0.4);
+  }
+  body { background: var(--bg); }
+  .doc { padding-bottom: 0; }
+}
+
+@page { size: A4 portrait; margin: 12mm 14mm; }
+
+/* ══ 文档容器 ══ */
+.doc {
+  max-width: 182mm;
+  margin: 0 auto;
+  padding-bottom: 14mm;
+}
+
+/* ══════════════════════════════════
+   封面
+══════════════════════════════════ */
+.cover {
+  text-align: center;
+  padding: 14mm 10mm 10mm;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 100%, rgba(196,163,90,0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.cv-label {
+  font-size: 7.5pt;
+  letter-spacing: 0.5em;
+  color: var(--muted);
+  margin-bottom: 3mm;
+  text-transform: uppercase;
+}
+
+.cv-title {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 36pt;
+  color: var(--parchment);
+  line-height: 1.1;
+  text-shadow: 0 0 40px rgba(196,163,90,0.2);
+}
+
+.cv-sub {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 13pt;
+  color: var(--gold);
+  margin: 2mm 0 4mm;
+  letter-spacing: 0.15em;
+}
+
+.cv-structure {
+  display: inline-flex;
+  gap: 0;
+  margin: 4mm 0 2mm;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  font-size: 8.5pt;
+}
+
+.cv-part {
+  padding: 2mm 6mm;
+  letter-spacing: 0.06em;
+}
+
+.cv-part.fail {
+  background: var(--fail-bg);
+  color: var(--fail-hue);
+  border-right: 1px solid var(--border);
+}
+
+.cv-part.win {
+  background: var(--win-bg);
+  color: var(--win-hue);
+}
+
+.cv-time {
+  font-size: 7.5pt;
+  color: var(--muted);
+  margin-top: 2mm;
+}
+
+/* ══════════════════════════════════
+   轮次标题栏
+══════════════════════════════════ */
+.round-header {
+  padding: 6mm 10mm 4mm;
+  border-bottom: 2px solid;
+  margin-bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 4mm;
+}
+
+.round-header.fail { border-color: rgba(120,150,170,0.6); }
+.round-header.win  { border-color: rgba(196,163,90,0.6); }
+
+.round-badge {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 9pt;
+  padding: 1.5mm 4mm;
+  border-radius: 20px;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.round-badge.fail {
+  background: var(--fail-bg);
+  border: 1px solid var(--fail-border);
+  color: var(--fail-hue);
+}
+
+.round-badge.win {
+  background: var(--win-bg);
+  border: 1px solid var(--win-border);
+  color: var(--win-hue);
+}
+
+.round-title {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 20pt;
+  line-height: 1.1;
+}
+
+.round-header.fail .round-title { color: #8AAABB; }
+.round-header.win  .round-title { color: var(--gold); }
+
+.round-sub {
+  font-size: 8.5pt;
+  color: var(--muted);
+  margin-left: auto;
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+
+/* ══════════════════════════════════
+   场景节点
+══════════════════════════════════ */
+.scene {
+  padding: 5mm 10mm 0;
+  page-break-inside: avoid;
+}
+
+.scene-header {
+  display: flex;
+  align-items: center;
+  gap: 2.5mm;
+  margin-bottom: 2.5mm;
+}
+
+.scene-dot {
+  width: 6mm;
+  height: 6mm;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9pt;
+}
+
+.fail .scene-dot { background: rgba(100,130,160,0.25); border: 1px solid var(--fail-border); color: var(--fail-hue); }
+.win  .scene-dot { background: rgba(196,163,90,0.15);  border: 1px solid var(--win-border);  color: var(--win-hue); }
+
+.scene-title {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 11.5pt;
+  line-height: 1.2;
+}
+
+.fail .scene-title { color: #9AABB8; }
+.win  .scene-title { color: var(--gold); }
+
+.scene-time {
+  margin-left: auto;
+  font-size: 7pt;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 0.3mm 2mm;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+p {
+  font-size: 9.5pt;
+  margin-bottom: 1.8mm;
+  line-height: 1.85;
+  color: var(--text);
+}
+
+/* ══ 白描引言 ══ */
+blockquote {
+  margin: 2.5mm 0;
+  padding: 2.5mm 4mm;
+  font-style: italic;
+  font-size: 9pt;
+  line-height: 1.7;
+  color: var(--parchment);
+}
+
+blockquote.fail {
+  border-left: 3px solid rgba(100,130,160,0.5);
+  background: rgba(60,80,100,0.08);
+}
+
+blockquote.win {
+  border-left: 3px solid rgba(196,163,90,0.5);
+  background: rgba(196,163,90,0.06);
+}
+
+blockquote p { color: inherit; margin: 0; }
+
+/* ══ 系统说明框 ══ */
+.sys-box {
+  border-radius: 3px;
+  padding: 2.5mm 3.5mm;
+  margin: 2.5mm 0;
+  font-size: 8.5pt;
+}
+
+.sys-box.fail {
+  background: var(--fail-bg);
+  border: 1px solid var(--fail-border);
+}
+
+.sys-box.win {
+  background: var(--win-bg);
+  border: 1px solid var(--win-border);
+}
+
+.sys-box-title {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 9pt;
+  margin-bottom: 1mm;
+}
+
+.sys-box.fail .sys-box-title { color: var(--fail-hue); }
+.sys-box.win  .sys-box-title { color: var(--win-hue); }
+
+.sys-box p { font-size: 8.5pt; margin: 0; color: var(--muted); }
+
+/* ══ 三值迷你条 ══ */
+.stat-mini {
+  display: flex;
+  gap: 2mm;
+  margin: 2mm 0;
+  flex-wrap: wrap;
+}
+
+.sm-item {
+  display: flex;
+  align-items: center;
+  gap: 1.5mm;
+  font-size: 8pt;
+  padding: 1mm 2.5mm;
+  border-radius: 12px;
+  border: 1px solid;
+  background: rgba(0,0,0,0.15);
+}
+
+.sm-bar {
+  width: 24mm;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sm-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.sm-item.color { border-color: rgba(194,69,45,0.4); color: #E07060; }
+.sm-item.color .sm-fill { background: var(--red); }
+.sm-item.ink   { border-color: rgba(90,143,196,0.4); color: #70A0D0; }
+.sm-item.ink   .sm-fill { background: var(--blue); }
+.sm-item.warmth{ border-color: rgba(196,163,90,0.4); color: var(--gold); }
+.sm-item.warmth .sm-fill { background: var(--gold); }
+
+/* ══ 合成流程 ══ */
+.craft-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5mm;
+  flex-wrap: wrap;
+  margin: 2mm 0;
+  font-size: 8.5pt;
+}
+
+.cr-step {
+  padding: 1mm 2.5mm;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  background: rgba(196,163,90,0.06);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.cr-arrow { color: var(--gold); }
+
+.cr-step.key {
+  background: rgba(196,163,90,0.14);
+  border-color: var(--win-border);
+  color: var(--gold);
+  font-family: 'Ma Shan Zheng', cursive;
+}
+
+/* ══ 网格信息 ══ */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2mm;
+  margin: 2.5mm 0;
+}
+
+.ig-item {
+  padding: 2mm 3mm;
+  border-radius: 3px;
+  font-size: 8.5pt;
+}
+
+.ig-item.fail {
+  background: var(--fail-bg);
+  border: 1px solid var(--fail-border);
+}
+
+.ig-item.win {
+  background: var(--win-bg);
+  border: 1px solid var(--win-border);
+}
+
+.ig-key {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 9pt;
+  margin-bottom: 0.5mm;
+}
+
+.ig-item.fail .ig-key { color: var(--fail-hue); }
+.ig-item.win  .ig-key { color: var(--win-hue); }
+
+.ig-val { color: var(--muted); line-height: 1.5; }
+
+/* ══ 分割线 ══ */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4mm 10mm 0;
+}
+
+/* ══ 轮次间过渡 ══ */
+.transition-block {
+  margin: 6mm 10mm;
+  padding: 3.5mm 5mm;
+  border: 1px dashed rgba(196,163,90,0.35);
+  background: rgba(196,163,90,0.04);
+  border-radius: 3px;
+  text-align: center;
+  font-size: 9pt;
+  color: var(--gold);
+  font-family: 'Ma Shan Zheng', cursive;
+  font-style: italic;
+  page-break-before: always;
+}
+
+/* ══ 死亡/通关结局框 ══ */
+.ending-box {
+  margin: 5mm 10mm 0;
+  padding: 4mm 6mm;
+  border-radius: 3px;
+  text-align: center;
+  page-break-inside: avoid;
+}
+
+.ending-box.fail {
+  background: rgba(40,50,65,0.4);
+  border: 1px solid rgba(100,130,160,0.4);
+}
+
+.ending-box.win {
+  background: rgba(50,40,20,0.4);
+  border: 1px solid rgba(196,163,90,0.5);
+}
+
+.ending-icon {
+  font-size: 22pt;
+  margin-bottom: 2mm;
+  display: block;
+}
+
+.ending-title {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 15pt;
+  margin-bottom: 1.5mm;
+}
+
+.ending-box.fail .ending-title { color: #8AAABB; }
+.ending-box.win  .ending-title { color: var(--gold); }
+
+.ending-desc {
+  font-size: 9pt;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ══ 最终结语 ══ */
+.final-box {
+  margin: 7mm 10mm 0;
+  padding: 5mm 7mm;
+  border: 1px solid var(--win-border);
+  background: var(--win-bg);
+  border-radius: 3px;
+  text-align: center;
+  page-break-inside: avoid;
+}
+
+.final-main {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 15pt;
+  color: var(--parchment);
+  line-height: 1.9;
+}
+
+.final-sub {
+  margin-top: 2mm;
+  font-size: 8pt;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+/* ══ 打印提示 ══ */
+.print-hint {
+  text-align: center;
+  padding: 6mm 0 10mm;
+  font-size: 8.5pt;
+  color: rgba(196,163,90,0.45);
+}
+kbd {
+  background: rgba(196,163,90,0.1);
+  border: 1px solid rgba(196,163,90,0.3);
+  border-radius: 3px;
+  padding: 0.3mm 2mm;
+}
+
+/* ══ 夜晚警示 ══ */
+.night-warn {
+  display: flex;
+  align-items: center;
+  gap: 2mm;
+  padding: 2mm 3mm;
+  border-radius: 3px;
+  font-size: 8.5pt;
+  margin: 2mm 0;
+}
+
+.night-warn.danger {
+  background: rgba(194,69,45,0.1);
+  border: 1px solid rgba(194,69,45,0.3);
+  color: #E08070;
+}
+
+.night-warn.safe {
+  background: rgba(196,163,90,0.08);
+  border: 1px solid rgba(196,163,90,0.3);
+  color: var(--gold);
+}
+
+/* 时间标注 */
+.time-tag {
+  display: inline-block;
+  font-size: 7pt;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 0.2mm 1.8mm;
+  border-radius: 8px;
+  margin-left: 1.5mm;
+  vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<div class="doc">
+
+<!-- ══════════ 封面 ══════════ -->
+<div class="cover">
+  <div class="cv-label">SHISEJI · THE CLOCKMENDER · 游戏解说</div>
+  <div class="cv-title">失色纪·修钟人</div>
+  <div class="cv-sub">双轮全程解说：从失败到通关</div>
+  <div class="cv-structure">
+    <div class="cv-part fail">第一轮 · 灰化之路</div>
+    <div class="cv-part win">第二轮 · 修钟归途</div>
+  </div>
+  <div class="cv-time">完整解说约 5 分钟 &nbsp;·&nbsp; 两轮对比呈现游戏全部系统</div>
+</div>
+
+
+<!-- ████████████████████████████████████
+     第一轮：失败之路
+████████████████████████████████████ -->
+<div class="round-header fail">
+  <div class="round-badge fail">第一轮</div>
+  <div class="round-title">灰化之路</div>
+  <div class="round-sub">⏱ ~2分30秒 · 展示世界与挑战</div>
+</div>
+
+<!-- 场景1：开场 -->
+<div class="scene fail">
+  <div class="scene-header">
+    <div class="scene-dot fail">一</div>
+    <div class="scene-title fail">进入褪色界：开场叙事</div>
+    <div class="scene-time">~25秒</div>
+  </div>
+
+  <p>游戏开始，屏幕上没有教程弹窗，没有"按A继续"——只有一段逐字落下的文字，像剪报拼贴在黑色画布上：</p>
+
+  <blockquote class="fail">
+    <p>钟停了。不是那种发条松尽的停，是颜色从指针上剥落后的停。他用力按了按。裂缝里渗出光来——不是暖光，是洗过太多遍的布那种苍白。</p>
+  </blockquote>
+
+  <p>这就是游戏的世界观设定方式：不用文字说明，用<strong>叙事把玩家推进去</strong>。角色林渡，水彩画师，被一座坏掉的古钟吞入了"褪色界"——一个颜色正在逃跑的世界。</p>
+</div>
+
+<div class="divider"></div>
+
+<!-- 场景2：序章教程 -->
+<div class="scene fail">
+  <div class="scene-header">
+    <div class="scene-dot fail">二</div>
+    <div class="scene-title fail">序章教程：学会用颜色活下去</div>
+    <div class="scene-time">~30秒</div>
+  </div>
+
+  <p>进入游戏后，屏幕左侧悬浮着三条数值条——这不是普通的血量与蓝量：</p>
+
+  <div class="stat-mini">
+    <div class="sm-item color">🎨 色值 <div class="sm-bar"><div class="sm-fill" style="width:72%"></div></div> 72</div>
+    <div class="sm-item ink">🖋 墨韵 <div class="sm-bar"><div class="sm-fill" style="width:85%"></div></div> 85</div>
+    <div class="sm-item warmth">🕯 纸温 <div class="sm-bar"><div class="sm-fill" style="width:68%"></div></div> 68</div>
+  </div>
+
+  <div class="sys-box fail">
+    <div class="sys-box-title">📌 系统：三值生命体系</div>
+    <p><strong>色值</strong> = 你的颜色浓度，即生命力，归零即灰化消亡。<strong>墨韵</strong> = 精神韧性，归零后无法合成道具。<strong>纸温</strong> = 身体物质温度，过低会加速色值流失。三者互相牵制，构成生存压力层次。</p>
+  </div>
+
+  <p>序章教程让玩家在一个小型安全场景中学会：移动探索（WASD / 虚拟摇杆）→ 靠近发光资源采集（E键）→ 打开背包与调色盘（I键/C键）→ 完成第一次合成。这段教程没有文字提示框，只有金色齿轮光晕在目标物上跳动。</p>
+</div>
+
+<div class="divider"></div>
+
+<!-- 场景3：正式游戏开始 -->
+<div class="scene fail">
+  <div class="scene-header">
+    <div class="scene-dot fail">三</div>
+    <div class="scene-title fail">进入正式游戏：白昼采集，信心满满</div>
+    <div class="scene-time">~25秒</div>
+  </div>
+
+  <p>进入正式地图，背景音乐变成低沉的八音盒旋律——<strong>C小调，不是大调</strong>，这个世界从一开始就没有明亮的底色。</p>
+
+  <p>地图散布着六种可采集资源节点，靠近时会看到淡淡的光晕：</p>
+
+  <div class="info-grid">
+    <div class="ig-item fail"><div class="ig-key">🌿 星尘草</div><div class="ig-val">黄昏时分草地自发光，草尖有金箔质感，是核心合成材料</div></div>
+    <div class="ig-item fail"><div class="ig-key">💧 晨露珠</div><div class="ig-val">石地上透明的水珠状结晶，回复墨韵效果好</div></div>
+    <div class="ig-item fail"><div class="ig-key">🌳 炭骨枝</div><div class="ig-val">枯树枝条，质地像炭笔，是制作澄墨水的关键</div></div>
+    <div class="ig-item fail"><div class="ig-key">🍎 彩实</div><div class="ig-val">赤/黄/蓝三色，三种都要收集，是七彩液的来源</div></div>
+  </div>
+
+  <p>右上角出现<strong>任务追踪器</strong>，告诉你当前目标和进度百分比。屏幕边缘还有金色箭头，指向最近的古钟碎片位置。<span class="time-tag">任务系统</span></p>
+</div>
+
+<div class="divider"></div>
+
+<!-- 场景4：遭遇生物 -->
+<div class="scene fail">
+  <div class="scene-header">
+    <div class="scene-dot fail">四</div>
+    <div class="scene-title fail">遭遇生物：友好的与危险的</div>
+    <div class="scene-time">~25秒</div>
+  </div>
+
+  <p>地图上有三种生物——但它们的出现方式很不一样：</p>
+
+  <div class="info-grid">
+    <div class="ig-item fail">
+      <div class="ig-key">🌿 鸣蛹（友好）</div>
+      <div class="ig-val">发光的茧状生物，每20秒吟唱一次，200px范围内自动回复墨韵+15。靠近它就是最好的补给策略。</div>
+    </div>
+    <div class="ig-item fail">
+      <div class="ig-key">🐦 灰烬鸦（敌对）</div>
+      <div class="ig-val">从天空俯冲，掠夺色值。第一天相对弱，但随天数血量上涨30%，越打越难。</div>
+    </div>
+  </div>
+
+  <p>——第一轮，玩家遭遇灰烬鸦，不知道可以用画笔（鼠标点击/攻击键）反击，被连续掠夺色值，色值条第一次下滑到警戒线以下。</p>
+</div>
+
+<div class="divider"></div>
+
+<!-- 场景5：夜晚来临，失误 -->
+<div class="scene fail">
+  <div class="scene-header">
+    <div class="scene-dot fail">五</div>
+    <div class="scene-title fail">黄昏变夜：忘记点纸灯</div>
+    <div class="scene-time">~30秒</div>
+  </div>
+
+  <p>游戏内时间流逝，背景色从苍白的白昼灰变成灰橙褐的黄昏，再变成深铅蓝黑的夜晚。音乐低频根音变重，节奏拉长。</p>
+
+  <div class="night-warn danger">⚠️ 夜晚侵蚀已激活：未在纸灯光圈内的玩家，色值与墨韵持续流失</div>
+
+  <div class="sys-box fail">
+    <div class="sys-box-title">📌 系统：昼夜循环与侵蚀机制</div>
+    <p>一天 = 现实约12分钟。夜晚时"无色王"激活侵蚀，直接扣减色值。唯一对抗方式：在背包中制作<strong>纸灯</strong>，放置后提供光圈保护区。没有纸灯 = 在夜晚慢性死亡。</p>
+  </div>
+
+  <p>第一轮玩家根本没合成纸灯——白天把炭骨枝全拿去合成其他东西了。夜晚来临，屏幕边缘开始出现灰色水渍，灰烬鸦在黑暗中飞来，数量是白天的两倍。</p>
+
+  <div class="stat-mini">
+    <div class="sm-item color">🎨 色值 <div class="sm-bar"><div class="sm-fill" style="width:22%"></div></div> 22 ↓</div>
+    <div class="sm-item ink">🖋 墨韵 <div class="sm-bar"><div class="sm-fill" style="width:18%"></div></div> 18 ↓</div>
+    <div class="sm-item warmth">🕯 纸温 <div class="sm-bar"><div class="sm-fill" style="width:30%"></div></div> 30 ↓</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- 死亡结局 -->
+<div class="ending-box fail">
+  <span class="ending-icon">🩶</span>
+  <div class="ending-title">色值归零 · 灰化消亡</div>
+  <div class="ending-desc">
+    屏幕上没有出现"Game Over"。<br>
+    林渡的轮廓变淡，线条像被水洇开的铅笔稿，越来越透明。<br>
+    有风穿过他胸腔的空洞，发出吹过空瓶子的呜咽。<br><br>
+    <em>地上只剩几粒金箔碎屑，是画笔杆上剥落的。它们亮了一下，也暗了。</em><br><br>
+    他成为了褪色界那圈仰头站立的透明人群像中的一员——<br>
+    永远在等待下一个修钟人。
+  </div>
+</div>
+
+<div style="padding:3mm 10mm 0;">
+  <p style="font-size:8.5pt;color:var(--muted);text-align:center;">失败结局动画共8个叙事节点，配合 A小调 55Hz Drone 低频环境音，持续约20秒</p>
+</div>
+
+
+<!-- 轮次过渡 -->
+<div class="transition-block">
+  ——这是第一次。颜色流尽，时间用完。<br>
+  但你记得了：世界的规律，生物的弱点，昼夜的节奏。<br>
+  <strong>第二次，不会一样。</strong>
+</div>
+
+
+<!-- ████████████████████████████████████
+     第二轮：通关之路
+████████████████████████████████████ -->
+<div class="round-header win">
+  <div class="round-badge win">第二轮</div>
+  <div class="round-title">修钟归途</div>
+  <div class="round-sub">⏱ ~2分30秒 · 展示完整系统与通关路径</div>
+</div>
+
+<!-- 场景1：带着经验重来 -->
+<div class="scene win">
+  <div class="scene-header">
+    <div class="scene-dot win">一</div>
+    <div class="scene-title win">带着记忆重新开始</div>
+    <div class="scene-time">~20秒</div>
+  </div>
+
+  <p>重新开始，这次玩家带着上一轮的认知。游戏有一套<strong>成就永久加成系统</strong>——第一轮中即使失败了，只要完成了某些行为，成就就已解锁：</p>
+
+  <div class="sys-box win">
+    <div class="sys-box-title">📌 系统：成就 & 永久加成</div>
+    <p>解锁成就后，加成<strong>跨局永久生效</strong>：首次采集 → 采集速度+10%；首次合成 → 合成速度+15%；夜晚存活 → 夜视能力提升（黑暗中光圈变大）；连击攻击 → 攻速加快。加成写入浏览器本地存档，下一局直接生效。</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- 场景2：白昼策略采集 -->
+<div class="scene win">
+  <div class="scene-header">
+    <div class="scene-dot win">二</div>
+    <div class="scene-title win">白昼策略：按优先级采集</div>
+    <div class="scene-time">~35秒</div>
+  </div>
+
+  <p>这次白昼做的第一件事：先攒炭骨枝，保证能在天黑前合成至少一盏纸灯。任务追踪器右上角的进度条开始推进，任务箭头从"找到古钟碎片"开始引导方向。</p>
+
+  <p>地图上三块古钟碎片散落各处——靠近时会看到金色齿轮光晕旋转，拾取时屏幕触发水彩扩散粒子特效，这是游戏里颜色最饱和的瞬间之一。</p>
+
+  <div class="sys-box win">
+    <div class="sys-box-title">📌 系统：任务追踪器</div>
+    <p>左上角迷你进度条实时更新（0%~100%），展开后显示当前章节名与子目标计数（如"星尘草 2/2 ✓"）。屏幕外目标还有Canvas绘制的箭头指引方向和距离，不会遮挡视野。</p>
+  </div>
+
+  <p>合成界面（调色盘）可以看到所有配方，材料不足时显示半透明状态，足够时高亮可点击：</p>
+
+  <div class="craft-row">
+    <div class="cr-step">炭骨枝×2 + 晨露珠×1</div>
+    <div class="cr-arrow">→</div>
+    <div class="cr-step key">🕯 纸灯</div>
+    <div class="cr-arrow">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</div>
+    <div class="cr-step">晨露珠×2 + 星尘草×1</div>
+    <div class="cr-arrow">→</div>
+    <div class="cr-step key">🍵 安心茶</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- 场景3：战斗机制 -->
+<div class="scene win">
+  <div class="scene-header">
+    <div class="scene-dot win">三</div>
+    <div class="scene-title win">战斗机制：弱点与反制</div>
+    <div class="scene-time">~30秒</div>
+  </div>
+
+  <p>这次遭遇灰烬鸦，玩家知道可以主动反击——按下攻击键（鼠标点击/攻击按钮），画笔划出一道弧线，攻击范围100px内的所有敌人。</p>
+
+  <p>然后遇到了纸络蛛——它会吐丝减速，并持续降低纸温。但它有一个致命弱点：</p>
+
+  <div class="sys-box win">
+    <div class="sys-box-title">📌 机制：纸络蛛弱点 · 燃烧眩晕</div>
+    <p>背包里携带<strong>赤色颜料</strong>时攻击纸络蛛，触发3秒燃烧眩晕，期间它无法移动，可以安全输出。这是唯一一个资源与战斗联动的深度机制——鼓励玩家带颜料出门探索，而不只是存着慢慢用。</p>
+  </div>
+
+  <p>鸣蛹则是玩家的天然盟友：在它20米范围内采集资源，等待它吟唱时顺带回复墨韵，可以大幅节省消耗型道具的用量。</p>
+</div>
+
+<div class="divider"></div>
+
+<!-- 场景4：夜晚正确应对 -->
+<div class="scene win">
+  <div class="scene-header">
+    <div class="scene-dot win">四</div>
+    <div class="scene-title win">夜晚：纸灯守护与侵蚀博弈</div>
+    <div class="scene-time">~25秒</div>
+  </div>
+
+  <p>黄昏来临前，玩家在营地位置放下纸灯——屏幕上扩散出温暖的光圈，光圈范围内的区域显示为相对明亮的淡金色，外部则是深铅蓝黑的黑暗。</p>
+
+  <div class="night-warn safe">✦ 纸灯已放置 · 光圈半径140px · 侵蚀伤害被抵消</div>
+
+  <p>夜晚音乐切换为极稀疏的版本：单音偶尔落下，大量留白，30Hz低频嗡鸣持续震动。</p>
+
+  <div class="sys-box win">
+    <div class="sys-box-title">📌 系统：昼夜节奏与刷怪机制</div>
+    <p>白昼每30秒刷1只敌人；黄昏每20秒刷1只；夜晚每15秒刷2只，且上限更高（灰烬鸦最多6只、纸络蛛最多5只同时存在）。每过一天，侵蚀强度+0.3，白天也会新增一只强化敌人。</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- 场景5：核心合成路径 -->
+<div class="scene win">
+  <div class="scene-header">
+    <div class="scene-dot win">五</div>
+    <div class="scene-title win">第二天：解锁核心合成路径</div>
+    <div class="scene-time">~25秒</div>
+  </div>
+
+  <p>有了古钟碎片，任务推进到第三章——合成古钟润滑剂，需要两步中间材料：</p>
+
+  <div class="craft-row">
+    <div class="cr-step">赤+黄+蓝彩实各×1</div>
+    <div class="cr-arrow">→</div>
+    <div class="cr-step key">七彩液</div>
+  </div>
+  <div class="craft-row">
+    <div class="cr-step">炭骨枝×2 + 晨露珠×2</div>
+    <div class="cr-arrow">→</div>
+    <div class="cr-step key">澄墨水</div>
+  </div>
+  <div class="craft-row">
+    <div class="cr-step key">七彩液</div>
+    <div class="cr-arrow">+</div>
+    <div class="cr-step key">澄墨水</div>
+    <div class="cr-arrow">+</div>
+    <div class="cr-step">星尘草×3</div>
+    <div class="cr-arrow">→</div>
+    <div class="cr-step key">⚙️ 古钟润滑剂</div>
+  </div>
+
+  <p>需要合成<strong>三瓶</strong>润滑剂。每合成一瓶，任务进度跳跃式推进，调色盘界面的配方列表高亮闪烁，成就系统记录"巧手"合成次数。</p>
+</div>
+
+<div class="divider"></div>
+
+<!-- 场景6：前往钟塔 -->
+<div class="scene win">
+  <div class="scene-header">
+    <div class="scene-dot win">六</div>
+    <div class="scene-title win">终章：前往古钟塔，三次修复</div>
+    <div class="scene-time">~20秒</div>
+  </div>
+
+  <p>地图右上角，古钟塔一直矗立在那里——两只纸络蛛守卫在塔前100米。击退它们，靠近钟塔，按下交互键：</p>
+
+  <p>第一次上油——钟面发出微弱光晕，钟针开始缓缓转动。第二次——光晕扩散，粒子飞散。第三次——</p>
+
+  <blockquote class="win">
+    <p>游戏画面锁定。背景音乐淡出，然后是十四秒的寂静，只剩最后一个低频音缓缓消逝。</p>
+  </blockquote>
+</div>
+
+
+<!-- 通关结局 -->
+<div class="ending-box win">
+  <span class="ending-icon">🔔</span>
+  <div class="ending-title">钟响了 · 不是欢呼的响，是放还</div>
+  <div class="ending-desc">
+    靛蓝从钟盘裂缝里渗出来，赭石漫上袖口，把长衫染回原来的样子。<br>
+    世界的颜色，一点一点渗回来——不是全新的，是经过裂缝之后的。<br><br>
+    <em>他走向右侧那道光。每一步都留下一枚脚印，脚印的颜色比周围深一点。</em><br><br>
+    通关结局动画共 17 个叙事节点，含玩家手绘钟盘的交互时刻，持续约60秒。<br>
+    结局记忆会写入本地存档，下次游戏开始时，钟塔已有淡淡的金色光迹。
+  </div>
+</div>
+
+
+<!-- 最终结语 -->
+<div class="final-box">
+  <div class="final-main">
+    第一轮：你学会了世界的重量<br>
+    第二轮：你知道了如何与它共存<br>
+    这就是《失色纪·修钟人》——<br>
+    <strong>用代码写成的一首挽歌，在浏览器里，随时可以打开</strong>
+  </div>
+  <div class="final-sub">PC键鼠 / 手机触屏 · 浏览器直接游玩 · 零下载 · 完整双结局体验</div>
+</div>
+
+</div><!-- /doc -->
+
+<div class="print-hint">
+  按 <kbd>Ctrl + P</kbd> → 另存为 PDF → A4 · 最小边距 · 勾选背景图形
+</div>
+
+</body>
+</html>

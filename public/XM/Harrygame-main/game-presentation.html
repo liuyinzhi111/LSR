@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>失色纪·修钟人 — 5分钟玩家介绍</title>
+<link rel="preconnect" href="https://fonts.loli.net">
+<link href="https://fonts.loli.net/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0D0A1A;
+  --surface:  #141026;
+  --card:     #1C1630;
+  --border:   rgba(196,163,90,0.22);
+  --gold:     #C4A35A;
+  --red:      #C2452D;
+  --blue:     #4A7FBF;
+  --text:     #E8DFD0;
+  --muted:    rgba(232,223,208,0.5);
+  --parchment:#F0E6C8;
+}
+
+html { font-size: 11pt; }
+
+body {
+  font-family: 'ZCOOL XiaoWei', 'STKaiti', serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+}
+
+/* ══ 打印时切换亮色方案 ══ */
+@media print {
+  :root {
+    --bg:      #FAF3E4;
+    --surface: #F2E8D0;
+    --card:    #EAD9B4;
+    --border:  rgba(100,60,20,0.22);
+    --gold:    #8B5E20;
+    --red:     #9B3A2A;
+    --blue:    #2A5A8A;
+    --text:    #1A1020;
+    --muted:   rgba(26,16,32,0.5);
+    --parchment:#FAF3E4;
+  }
+  body { background: var(--bg); }
+}
+
+/* ══ 页面包装 ══ */
+.doc {
+  max-width: 180mm;
+  margin: 0 auto;
+  padding: 0 0 16mm;
+}
+
+/* ══ 封面 ══ */
+.cover {
+  background: var(--surface);
+  border-bottom: 2px solid var(--gold);
+  padding: 14mm 12mm 10mm;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 120%, rgba(196,163,90,0.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.tag-row {
+  display: flex;
+  justify-content: center;
+  gap: 3mm;
+  margin-bottom: 5mm;
+  flex-wrap: wrap;
+}
+
+.tag {
+  border: 1px solid var(--border);
+  color: var(--gold);
+  font-size: 7.5pt;
+  padding: 0.8mm 3mm;
+  border-radius: 20px;
+  letter-spacing: 0.1em;
+  background: rgba(196,163,90,0.06);
+}
+
+.cover-sub {
+  font-family: 'ZCOOL XiaoWei', serif;
+  font-size: 8.5pt;
+  color: var(--muted);
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  margin-bottom: 3mm;
+}
+
+.cover-title {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 38pt;
+  color: var(--parchment);
+  line-height: 1.1;
+  text-shadow: 0 0 30px rgba(196,163,90,0.3);
+}
+
+.cover-en {
+  font-size: 11pt;
+  color: var(--gold);
+  letter-spacing: 0.25em;
+  margin: 2mm 0 4mm;
+}
+
+.cover-tagline {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 14pt;
+  color: var(--red);
+  letter-spacing: 0.1em;
+  margin-bottom: 6mm;
+}
+
+.time-badge {
+  display: inline-block;
+  background: var(--red);
+  color: #fff;
+  font-size: 8pt;
+  padding: 1.5mm 5mm;
+  border-radius: 20px;
+  letter-spacing: 0.1em;
+}
+
+/* ══ 章节 ══ */
+.section {
+  padding: 7mm 12mm 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+  margin-bottom: 3mm;
+}
+
+.section-num {
+  width: 8mm;
+  height: 8mm;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--bg);
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 11pt;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.section-title {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 15pt;
+  color: var(--gold);
+  line-height: 1.2;
+}
+
+.section-time {
+  margin-left: auto;
+  font-size: 7.5pt;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 0.5mm 2.5mm;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+p {
+  font-size: 10pt;
+  margin-bottom: 2mm;
+  line-height: 1.85;
+  color: var(--text);
+}
+
+/* ══ 引言 ══ */
+blockquote {
+  margin: 3mm 0;
+  padding: 3mm 5mm;
+  border-left: 3px solid var(--red);
+  background: rgba(194,69,45,0.06);
+  font-style: italic;
+  font-size: 9.5pt;
+  color: var(--parchment);
+}
+
+blockquote p { color: var(--parchment); margin: 0; }
+
+/* ══ 三值卡片 ══ */
+.stat-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2.5mm;
+  margin: 3mm 0;
+}
+
+.stat-card {
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 3px;
+  padding: 3mm;
+  text-align: center;
+}
+
+.stat-icon {
+  font-size: 18pt;
+  line-height: 1;
+  margin-bottom: 1.5mm;
+}
+
+.stat-name {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 11pt;
+  margin-bottom: 1mm;
+}
+
+.stat-name.color { color: #C2452D; }
+.stat-name.ink   { color: #4A7FBF; }
+.stat-name.warmth{ color: #C4A35A; }
+
+.stat-desc {
+  font-size: 8pt;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ══ 昼夜条 ══ */
+.cycle-bar {
+  display: grid;
+  grid-template-columns: 2.5fr 1.5fr 2fr;
+  gap: 2mm;
+  margin: 3mm 0;
+}
+
+.cycle-seg {
+  border-radius: 3px;
+  padding: 2.5mm 3mm;
+  text-align: center;
+}
+
+.cycle-seg.day   { background: rgba(196,163,90,0.12); border: 1px solid rgba(196,163,90,0.3); }
+.cycle-seg.dusk  { background: rgba(194,69,45,0.10);  border: 1px solid rgba(194,69,45,0.3); }
+.cycle-seg.night { background: rgba(74,127,191,0.12); border: 1px solid rgba(74,127,191,0.3); }
+
+.cycle-label {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 10pt;
+  margin-bottom: 0.5mm;
+}
+
+.cycle-seg.day   .cycle-label { color: var(--gold); }
+.cycle-seg.dusk  .cycle-label { color: var(--red); }
+.cycle-seg.night .cycle-label { color: var(--blue); }
+
+.cycle-desc {
+  font-size: 7.5pt;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ══ 怪物卡片 ══ */
+.creature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2mm;
+  margin: 3mm 0;
+}
+
+.creature-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 3mm;
+  padding: 2.5mm 3mm;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 3px;
+}
+
+.creature-icon { font-size: 16pt; line-height: 1; flex-shrink: 0; margin-top: 0.5mm; }
+
+.creature-info .cn { 
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 11pt;
+  color: var(--parchment);
+}
+
+.creature-info .ct {
+  display: inline-block;
+  font-size: 7pt;
+  padding: 0.3mm 2mm;
+  border-radius: 10px;
+  margin-left: 2mm;
+  vertical-align: middle;
+}
+
+.ct.friendly { background: rgba(74,127,191,0.2); color: var(--blue); border: 1px solid rgba(74,127,191,0.4); }
+.ct.hostile  { background: rgba(194,69,45,0.2);  color: var(--red);  border: 1px solid rgba(194,69,45,0.4); }
+
+.creature-info .cd {
+  display: block;
+  font-size: 8.5pt;
+  color: var(--muted);
+  margin-top: 0.5mm;
+  line-height: 1.5;
+}
+
+/* ══ 合成流程 ══ */
+.craft-flow {
+  display: flex;
+  align-items: center;
+  gap: 1.5mm;
+  flex-wrap: wrap;
+  margin: 3mm 0;
+  font-size: 8.5pt;
+}
+
+.cf-step {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1.5mm 3mm;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.cf-arrow {
+  color: var(--gold);
+  font-size: 10pt;
+  flex-shrink: 0;
+}
+
+.cf-step.final {
+  background: rgba(196,163,90,0.12);
+  border-color: var(--gold);
+  color: var(--gold);
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 9.5pt;
+}
+
+/* ══ 技术亮点 ══ */
+.tech-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5mm;
+  margin: 3mm 0;
+}
+
+.tech-item {
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 3px;
+  padding: 3mm;
+}
+
+.tech-icon { font-size: 14pt; margin-bottom: 1mm; }
+
+.tech-title {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 10pt;
+  color: var(--gold);
+  margin-bottom: 1mm;
+}
+
+.tech-body {
+  font-size: 8pt;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ══ 结语高亮框 ══ */
+.closing-box {
+  margin: 7mm 12mm 0;
+  padding: 5mm 7mm;
+  border: 1px solid var(--gold);
+  background: rgba(196,163,90,0.07);
+  border-radius: 3px;
+  text-align: center;
+}
+
+.closing-main {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 16pt;
+  color: var(--parchment);
+  line-height: 1.7;
+  margin-bottom: 2mm;
+}
+
+.closing-sub {
+  font-size: 8.5pt;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* ══ 分割线 ══ */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 5mm 12mm 0;
+}
+
+/* ══ 演讲提示侧栏 ══ */
+.speaker-note {
+  margin: 2mm 12mm 0;
+  padding: 1.5mm 3mm;
+  border-left: 2px solid rgba(74,127,191,0.4);
+  font-size: 8pt;
+  color: rgba(74,127,191,0.7);
+  font-style: italic;
+}
+
+/* ══ 打印控制 ══ */
+@page { size: A4 portrait; margin: 10mm 15mm; }
+
+@media print {
+  body { background: var(--bg); }
+
+  .doc { max-width: 100%; padding: 0; }
+
+  .cover { page-break-after: avoid; }
+
+  .section { page-break-inside: avoid; }
+
+  .tech-grid { page-break-inside: avoid; }
+
+  .print-hint { display: none; }
+}
+
+/* ══ 打印提示（屏幕） ══ */
+.print-hint {
+  text-align: center;
+  padding: 6mm 0 10mm;
+  font-size: 9pt;
+  color: rgba(196,163,90,0.5);
+}
+
+kbd {
+  background: rgba(196,163,90,0.12);
+  border: 1px solid rgba(196,163,90,0.3);
+  border-radius: 3px;
+  padding: 0.5mm 2mm;
+  font-size: 8.5pt;
+}
+</style>
+</head>
+<body>
+<div class="doc">
+
+<!-- ══ 封面 ══ -->
+<div class="cover">
+  <div class="tag-row">
+    <span class="tag">生存解谜</span>
+    <span class="tag">水彩暗黑童话</span>
+    <span class="tag">网页游戏</span>
+    <span class="tag">PC + 手机</span>
+  </div>
+  <div class="cover-sub">SHISEJI · THE CLOCKMENDER</div>
+  <div class="cover-title">失色纪·修钟人</div>
+  <div class="cover-en">失去颜色的世界  ·  修复时间的人</div>
+  <div class="cover-tagline">颜色是你的生命，时间是你的敌人</div>
+  <div class="time-badge">⏱ 5 分钟介绍</div>
+</div>
+
+<div class="speaker-note">▸ 演讲提示：以下每节标注建议用时，合计约 5 分钟</div>
+
+<!-- ══ 1. 钩子开场 ══ -->
+<div class="divider"></div>
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">一</div>
+    <div class="section-title">你见过颜色"逃跑"吗？</div>
+    <div class="section-time">⏱ ~40秒</div>
+  </div>
+
+  <p>想象一下：你正在修复一座老旧的钟，手指触到表盘上剥落的彩绘，下一秒——你掉进了另一个世界。</p>
+
+  <blockquote>
+    <p>赭石变成褐，褐变成灰，灰变成虚无。这个世界的颜色，正在一点一点地逃走。</p>
+  </blockquote>
+
+  <p>这就是《失色纪·修钟人》的开场。一个画师，一座褪色的异世界，还有只剩<strong>三天</strong>的时间。</p>
+</div>
+
+<!-- ══ 2. 游戏是什么 ══ -->
+<div class="divider"></div>
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">二</div>
+    <div class="section-title">这是一款什么游戏？</div>
+    <div class="section-time">⏱ ~40秒</div>
+  </div>
+
+  <p>《失色纪·修钟人》是一款<strong>网页端生存解谜游戏</strong>，可以直接在手机或电脑的浏览器里玩，不需要下载任何东西。</p>
+
+  <p>玩法核心很简单：在一个正在褪色的世界里，<strong>采集资源 → 合成道具 → 修复古钟</strong>。但挑战在于——你只有三天，而夜晚的黑暗会不断吞噬你的颜色。</p>
+
+  <p>游戏参考了《星露谷》的采集节奏、水墨插画的美术风格，同时加入了独特的叙事设计：<strong>胜利不是凯旋，失败不是"你死了"</strong>——一切都用物质性的笔触描述。</p>
+</div>
+
+<!-- ══ 3. 三值系统 ══ -->
+<div class="divider"></div>
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">三</div>
+    <div class="section-title">最有趣的设计：颜色就是生命</div>
+    <div class="section-time">⏱ ~60秒</div>
+  </div>
+
+  <p>游戏没有传统的"血条"，而是用<strong>三种物质状态</strong>来表示你的存活程度，每一项都和世界主题直接相关：</p>
+
+  <div class="stat-cards">
+    <div class="stat-card">
+      <div class="stat-icon">🎨</div>
+      <div class="stat-name color">色值</div>
+      <div class="stat-desc">画师的颜色浓度<br>归零即灰化消亡</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🖋️</div>
+      <div class="stat-name ink">墨韵</div>
+      <div class="stat-desc">精神韧性<br>归零无法行动合成</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🕯️</div>
+      <div class="stat-name warmth">纸温</div>
+      <div class="stat-desc">身体的物质温度<br>归零色值加速流失</div>
+    </div>
+  </div>
+
+  <p>这三项数值之间互相影响，形成有趣的策略层次——补充哪一项、何时补充，都是玩家需要实时判断的问题。</p>
+</div>
+
+<!-- ══ 4. 昼夜与合成 ══ -->
+<div class="divider"></div>
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">四</div>
+    <div class="section-title">昼夜循环 × 合成系统</div>
+    <div class="section-time">⏱ ~70秒</div>
+  </div>
+
+  <div class="cycle-bar">
+    <div class="cycle-seg day">
+      <div class="cycle-label">☀ 白昼</div>
+      <div class="cycle-desc">采集资源<br>安全探索地图</div>
+    </div>
+    <div class="cycle-seg dusk">
+      <div class="cycle-label">🌇 黄昏</div>
+      <div class="cycle-desc">侵蚀开始<br>抓紧合成道具</div>
+    </div>
+    <div class="cycle-seg night">
+      <div class="cycle-label">🌑 夜晚</div>
+      <div class="cycle-desc">怪物涌现<br>纸灯是唯一防护</div>
+    </div>
+  </div>
+
+  <p>合成系统有一条主线路径，逻辑清晰但需要一定规划：</p>
+
+  <div class="craft-flow">
+    <div class="cf-step">三色彩实</div>
+    <div class="cf-arrow">→</div>
+    <div class="cf-step">七彩液</div>
+    <div class="cf-arrow">+</div>
+    <div class="cf-step">澄墨水</div>
+    <div class="cf-arrow">+</div>
+    <div class="cf-step">星尘草×3</div>
+    <div class="cf-arrow">→</div>
+    <div class="cf-step final">古钟润滑剂 ×3</div>
+    <div class="cf-arrow">→</div>
+    <div class="cf-step final">🔔 钟响，归途</div>
+  </div>
+
+  <div class="creature-list">
+    <div class="creature-row">
+      <div class="creature-icon">🌿</div>
+      <div class="creature-info">
+        <span class="cn">鸣蛹</span><span class="ct friendly">友好</span>
+        <span class="cd">发光茧体，每20秒吟唱一次，200px范围内回复玩家墨韵+15。你的最佳盟友。</span>
+      </div>
+    </div>
+    <div class="creature-row">
+      <div class="creature-icon">🐦</div>
+      <div class="creature-info">
+        <span class="cn">灰烬鸦</span><span class="ct hostile">敌对</span>
+        <span class="cd">飞扑掠夺色值，越到后期越强。夜晚一次来两只，务必点亮纸灯。</span>
+      </div>
+    </div>
+    <div class="creature-row">
+      <div class="creature-icon">🕷️</div>
+      <div class="creature-info">
+        <span class="cn">纸络蛛</span><span class="ct hostile">敌对</span>
+        <span class="cd">吐丝减速、降纸温；但有弱点——持有赤色颜料攻击时可触发燃烧眩晕，瞬间反杀。</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 5. 叙事与结局 ══ -->
+<div class="divider"></div>
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">五</div>
+    <div class="section-title">两种结局，两种感受</div>
+    <div class="section-time">⏱ ~40秒</div>
+  </div>
+
+  <p><strong>修复成功</strong>：钟响了，不是欢呼的响，是"放还"的响。靛蓝从裂缝渗出，赭石漫回袖口，但指缝里还嵌着褪色界的土——你回来了，但有些东西留下了。</p>
+
+  <p><strong>颜色耗尽</strong>：你不会看到"Game Over"。你的轮廓越来越淡，越来越透明，最终成为褪色界那圈仰头站立的透明人群像中的一员——永远在等待下一个修钟人。</p>
+
+  <p>两个结局都设计了<strong>完整的交互动画序列</strong>，共计25个叙事节点，配合实时生成的音乐和粒子特效。</p>
+</div>
+
+<!-- ══ 6. 技术亮点 ══ -->
+<div class="divider"></div>
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">六</div>
+    <div class="section-title">为什么说它在技术上很特别？</div>
+    <div class="section-time">⏱ ~50秒</div>
+  </div>
+
+  <p>作为一款网页游戏，《失色纪·修钟人》有一个不寻常的技术决策：</p>
+
+  <div class="tech-grid">
+    <div class="tech-item">
+      <div class="tech-icon">🎨</div>
+      <div class="tech-title">零图片资源</div>
+      <div class="tech-body">所有视觉——草地、怪物、钟塔、粒子特效——全部由 Canvas 代码路径实时绘制，没有任何外部图片文件</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">🎵</div>
+      <div class="tech-title">实时音乐合成</div>
+      <div class="tech-body">所有背景音乐和音效均由 Web Audio API 实时生成，C小调八音盒旋律随昼夜动态变化，无任何音频文件</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">📦</div>
+      <div class="tech-title">零框架依赖</div>
+      <div class="tech-body">不使用 React、Vue、jQuery 等任何框架，纯原生 JavaScript，代码完全透明可读</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">📱</div>
+      <div class="tech-title">全平台适配</div>
+      <div class="tech-body">PC 键鼠与手机触屏双模式，虚拟摇杆非线性速度曲线，成就系统提供跨局永久加成</div>
+    </div>
+  </div>
+
+  <p style="margin-top:2mm;">简单说：这款游戏是<strong>用代码"画"出来的、"弹奏"出来的</strong>，每一帧画面、每一个音符都是运行时实时计算的结果。</p>
+</div>
+
+<!-- ══ 结语 ══ -->
+<div class="divider"></div>
+<div class="closing-box" style="margin-top:5mm;">
+  <div class="closing-main">
+    三天时间<br>
+    一座停摆的钟<br>
+    在颜色消失之前，你能修好它吗？
+  </div>
+  <div class="closing-sub">打开浏览器即可游玩 · 无需下载 · PC 与手机均支持</div>
+</div>
+
+</div><!-- /doc -->
+
+<div class="print-hint">
+  按 <kbd>Ctrl + P</kbd> → 打印机选 <strong>另存为 PDF</strong> → A4 · 最小边距 · 勾选背景图形
+</div>
+</body>
+</html>

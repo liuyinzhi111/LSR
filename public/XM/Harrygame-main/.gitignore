@@ -1,0 +1,8 @@
+游戏设计大纲.md
+*.md
+windsurf_deployment.yaml
+
+# 重复备份文件
+*(*).html
+*(*).css
+js/*(*).js

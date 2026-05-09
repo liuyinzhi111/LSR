@@ -1,0 +1,384 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #f5f5f3;
+  --color-ink: #0a0a0a;
+  --color-muted: rgba(10, 10, 10, 0.58);
+  --color-accent: #ff8640;
+  --color-border: rgba(10, 10, 10, 0.1);
+  --color-border-hover: rgba(10, 10, 10, 0.25);
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-body: 'Inter', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ===== Intro Animation (GSAP 驱动) ===== */
+#intro {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: #ff5a1a;
+  overflow: hidden;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#flash {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background-color: #ffffff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* JASON 字母容器 */
+#letters {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.70em;
+  /* letter-spacing 在最右产生额外尾距，padding-left 补偿视觉居中 */
+  padding-left: 0.70em;
+}
+
+#letters .intro-letter {
+  display: inline-block;
+  font-family: 'Bebas Neue', 'Impact', sans-serif;
+  font-weight: 400;
+  font-size: 9.5vw;
+  line-height: 1;
+  color: #ffffff;
+  will-change: transform, opacity;
+}
+
+#intro-loading {
+  position: absolute;
+  left: 50%;
+  bottom: 9vh;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: clamp(9px, 0.95vw, 13px);
+  line-height: 1;
+  letter-spacing: 0.32em;
+  color: #ffffff;
+  white-space: nowrap;
+  animation: intro-loading-breathe 1.5s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes intro-loading-breathe {
+  0%,
+  100% {
+    opacity: 0.68;
+    transform: translateX(-50%) scale(0.985);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.02);
+  }
+}
+
+/* 刘盛瑞 容器 */
+#name {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.2em;
+  padding-left: 0.2em;
+}
+
+#name .intro-cn {
+  display: inline-block;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
+  font-weight: 700;
+  font-size: 14vw;
+  line-height: 1;
+  color: #ffffff;
+  opacity: 0;
+  will-change: transform, opacity;
+  transform-origin: 50% 50%;
+}
+
+#intro-welcome {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.55rem, 1.2vw, 1.1rem);
+  width: min(88vw, 860px);
+  transform: translate(-50%, -50%);
+  color: rgba(255, 255, 255, 0.88);
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
+  font-size: clamp(1.6rem, 3.2vw, 3.2rem);
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  line-height: 1.5;
+  text-align: center;
+  white-space: nowrap;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+#intro-welcome strong {
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+}
+
+#site {
+  background-color: transparent;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes marquee-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ========== Glitch (JASON 大标题故障艺术效果) ========== */
+.glitch {
+  position: relative;
+  display: inline-block;
+  animation: glitch-base 3.5s steps(1, end) infinite;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+  /* 浅色背景下用 multiply：accent × bg = accent；accent × ink ≈ ink，
+     既保留橙色错位条又不破坏深色文字本身。 */
+  mix-blend-mode: multiply;
+  color: var(--color-accent);
+}
+
+.glitch::before {
+  animation: glitch-before 2.2s steps(1, end) infinite;
+}
+
+.glitch::after {
+  animation: glitch-after 2.7s steps(1, end) infinite;
+}
+
+@keyframes glitch-base {
+  0%, 7%, 100% { transform: translate(0, 0); }
+  2% { transform: translate(-2px, 1px); }
+  4% { transform: translate(2px, -1px); }
+  10%, 60% { transform: translate(0, 0); }
+  62% { transform: translate(-1px, 0); }
+  64% { transform: translate(1px, 1px); }
+  68% { transform: translate(0, 0); }
+}
+
+@keyframes glitch-before {
+  0%   { clip-path: inset(0 0 95% 0);  transform: translate(-2px, 0); }
+  10%  { clip-path: inset(40% 0 45% 0); transform: translate(-3px, -1px); }
+  20%  { clip-path: inset(60% 0 25% 0); transform: translate(-1px, 1px); }
+  30%  { clip-path: inset(10% 0 75% 0); transform: translate(-3px, 0); }
+  40%  { clip-path: inset(75% 0 10% 0); transform: translate(-2px, -1px); }
+  50%  { clip-path: inset(25% 0 60% 0); transform: translate(-1px, 1px); }
+  60%  { clip-path: inset(85% 0 5% 0);  transform: translate(-3px, 0); }
+  70%  { clip-path: inset(30% 0 55% 0); transform: translate(-2px, 1px); }
+  80%  { clip-path: inset(55% 0 30% 0); transform: translate(-1px, -1px); }
+  90%  { clip-path: inset(5% 0 85% 0);  transform: translate(-3px, 0); }
+  100% { clip-path: inset(0 0 95% 0);  transform: translate(-2px, 0); }
+}
+
+@keyframes glitch-after {
+  0%   { clip-path: inset(80% 0 5% 0);  transform: translate(2px, 0); }
+  10%  { clip-path: inset(20% 0 65% 0); transform: translate(3px, 1px); }
+  20%  { clip-path: inset(45% 0 35% 0); transform: translate(1px, -1px); }
+  30%  { clip-path: inset(70% 0 15% 0); transform: translate(3px, 0); }
+  40%  { clip-path: inset(5% 0 80% 0);  transform: translate(2px, 1px); }
+  50%  { clip-path: inset(55% 0 25% 0); transform: translate(1px, -1px); }
+  60%  { clip-path: inset(35% 0 50% 0); transform: translate(3px, 0); }
+  70%  { clip-path: inset(65% 0 20% 0); transform: translate(2px, -1px); }
+  80%  { clip-path: inset(15% 0 70% 0); transform: translate(1px, 1px); }
+  90%  { clip-path: inset(85% 0 5% 0);  transform: translate(3px, 0); }
+  100% { clip-path: inset(80% 0 5% 0);  transform: translate(2px, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glitch,
+  .glitch::before,
+  .glitch::after {
+    animation: none;
+  }
+  .glitch::before,
+  .glitch::after {
+    display: none;
+  }
+}
+
+/* ========== AboutMe 单屏：移动端单列堆叠 ========== */
+@media (max-width: 768px) {
+  .aboutme-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  /* 移动端字母列居中显示 */
+  .aboutme-grid > ul {
+    align-items: center !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 16px !important;
+  }
+}
+
+.skill-card:hover {
+  border-color: var(--color-border-hover) !important;
+}
+
+.carousel-button {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 18px;
+  cursor: pointer;
+  transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.carousel-button:hover {
+  border-color: var(--color-border-hover);
+  color: var(--color-accent);
+  transform: translateY(-2px);
+}
+
+.project-card:hover {
+  border-color: var(--color-accent) !important;
+  border-width: 2px !important;
+  background-color: color-mix(in srgb, var(--color-accent) 4%, var(--color-bg)) !important;
+}
+
+.project-card:hover .project-image {
+  transform: scale(1.03);
+}
+
+/* ========== Collaborators 卡片 ========== */
+.collab-card:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 40%, transparent) !important;
+  background-color: color-mix(in srgb, var(--color-accent) 3%, var(--color-bg)) !important;
+}
+
+@media (max-width: 1024px) {
+  .collab-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .collab-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+}
+
+/* ========== Contact ========== */
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+  .contact-footer {
+    flex-direction: column !important;
+    gap: 12px !important;
+    text-align: center !important;
+  }
+  .contact-slogan {
+    font-size: clamp(56px, 14vw, 96px) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .skills-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+  .skills-carousel {
+    height: 480px !important;
+    perspective: 1000px !important;
+  }
+  .skill-carousel-card {
+    width: min(82vw, 420px) !important;
+    min-height: 340px !important;
+    padding: 28px 22px !important;
+  }
+  .project-card {
+    align-items: flex-start !important;
+    padding: 28px 24px !important;
+    top: 88px !important;
+  }
+  .project-index {
+    width: 48px !important;
+    font-size: clamp(1.5rem, 10vw, 2.4rem) !important;
+  }
+  .project-content {
+    padding: 0 0 0 20px !important;
+  }
+  .project-image-wrap {
+    display: none !important;
+  }
+}
+
+/* ========== Signature 落款 ========== */
+.signature-caption {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  text-align: center;
+  white-space: nowrap;
+}
