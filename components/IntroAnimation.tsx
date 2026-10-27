@@ -15,6 +15,7 @@ import gsap from 'gsap';
 export default function IntroAnimation() {
   const introRef = useRef<HTMLDivElement>(null);
   const flashRef = useRef<HTMLDivElement>(null);
+  const transitionBgRef = useRef<HTMLDivElement>(null);
   const lettersRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLDivElement>(null);
   const welcomeRef = useRef<HTMLDivElement>(null);
@@ -22,21 +23,22 @@ export default function IntroAnimation() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    if (!introRef.current || !flashRef.current || !lettersRef.current || !nameRef.current || !welcomeRef.current || !loadingRef.current) {
+    if (!introRef.current || !flashRef.current || !transitionBgRef.current || !lettersRef.current || !nameRef.current || !welcomeRef.current || !loadingRef.current) {
       return;
     }
 
     const intro = introRef.current;
     const flash = flashRef.current;
+    const transitionBg = transitionBgRef.current;
     const lettersWrap = lettersRef.current;
     const nameWrap = nameRef.current;
     const welcome = welcomeRef.current;
     const loading = loadingRef.current;
 
     const letters = Array.from(lettersWrap.querySelectorAll<HTMLSpanElement>('.intro-letter'));
+    const letterSlots = Array.from(lettersWrap.querySelectorAll<HTMLSpanElement>('.intro-letter-slot'));
     const nameLetters = Array.from(nameWrap.querySelectorAll<HTMLSpanElement>('.intro-cn'));
     const liu = nameLetters[0];
-    const sheng = nameLetters[1];
     const rui = nameLetters[2];
 
     // 锁滚动
@@ -49,6 +51,11 @@ export default function IntroAnimation() {
     // ===== 初始状态 =====
     gsap.set(letters, { opacity: 1, y: 0, scale: 1 });
     gsap.set(lettersWrap, { letterSpacing: '0.70em', paddingLeft: '0.70em' });
+    // 保持原字距拉伸轨迹，用独立平移代替逐帧改变字距/内边距的布局计算。
+    const baseSpacing = parseFloat(getComputedStyle(lettersWrap).letterSpacing);
+    const expandedSpacing = parseFloat(getComputedStyle(lettersWrap).fontSize) * 6;
+    const centerSlot = (letters.length - 1) / 2;
+    gsap.set(letterSlots, { x: 0, force3D: true });
     gsap.set(nameLetters, { opacity: 0, scaleX: 0.2 });
     gsap.set(welcome, { opacity: 0, xPercent: -50, yPercent: -50, y: 18 });
     gsap.set(loading, { opacity: 1, y: 0 });
@@ -96,9 +103,8 @@ export default function IntroAnimation() {
       '<+=0.5'
     );
 
-    tl.to(lettersWrap, {
-      letterSpacing: '6.0em',
-      paddingLeft: '6.0em',
+    tl.to(letterSlots, {
+      x: (i) => (i - centerSlot) * (expandedSpacing - baseSpacing),
       duration: 0.85,
       ease: 'power2.inOut',
     });
@@ -107,12 +113,11 @@ export default function IntroAnimation() {
     const stage3Label = 'stage3';
     tl.addLabel(stage3Label);
 
-    // 先把字距从 6.0em 拉回 0
+    // 用同一条轨迹把字距从 6.0em 拉回 0（不重新排版）。
     tl.to(
-      lettersWrap,
+      letterSlots,
       {
-        letterSpacing: '0em',
-        paddingLeft: '0em',
+        x: (i) => (i - centerSlot) * -baseSpacing,
         duration: 0.7,
         ease: 'power2.inOut',
       },
@@ -120,7 +125,7 @@ export default function IntroAnimation() {
     );
 
     // 字母向中心收缩、缩小并淡出
-    letters.forEach((el, i) => {
+    letters.forEach((el) => {
       const rect = el.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const dx = screenCenterX - centerX;
@@ -173,7 +178,6 @@ export default function IntroAnimation() {
     tl.to(
       intro,
       {
-        backgroundColor: '#F5F0EB',
         scale: 1.05,
         opacity: 0,
         duration: 0.7,
@@ -182,6 +186,9 @@ export default function IntroAnimation() {
       },
       '<-=0.05'
     );
+
+    // 同样的橙色→米白过渡，用独立色层淡入，避免逐帧重绘整屏背景。
+    tl.to(transitionBg, { opacity: 1, duration: 0.7, ease: 'power2.inOut' }, '<');
 
     if (siteEl) {
       tl.to(
@@ -207,13 +214,14 @@ export default function IntroAnimation() {
 
   return (
     <>
-      <div id="intro" ref={introRef}>
+      <div id="intro" ref={introRef} style={{ willChange: 'transform, opacity' }}>
+        <div ref={transitionBgRef} aria-hidden="true" style={{ position: 'absolute', inset: 0, backgroundColor: '#F5F0EB', opacity: 0, willChange: 'opacity' }} />
         <div id="letters" ref={lettersRef}>
-          <span className="intro-letter">J</span>
-          <span className="intro-letter">A</span>
-          <span className="intro-letter">S</span>
-          <span className="intro-letter">O</span>
-          <span className="intro-letter">N</span>
+          {'JASON'.split('').map((letter) => (
+            <span key={letter} className="intro-letter-slot" style={{ display: 'flex' }}>
+              <span className="intro-letter">{letter}</span>
+            </span>
+          ))}
         </div>
         <div id="intro-loading" ref={loadingRef}>LOADING, PLEASE WAIT....</div>
         <div id="name" ref={nameRef}>
@@ -227,7 +235,7 @@ export default function IntroAnimation() {
           <span>的个人网站</span>
         </div>
       </div>
-      <div id="flash" ref={flashRef} aria-hidden="true" />
+      <div id="flash" ref={flashRef} aria-hidden="true" style={{ willChange: 'opacity' }} />
     </>
   );
 }

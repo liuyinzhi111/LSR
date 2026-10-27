@@ -25,11 +25,11 @@ const AI_PARTNERS: readonly Tool[] = [
   },
   {
     type: 'AI',
-    name: 'Cursor / Windsurf',
-    role: '代码执行层',
-    desc: '描述我要什么，它把代码写出来。我负责审方向、定逻辑、验收结果，不写每一行但能控制每一行。',
+    name: 'Codex / Claude Code',
+    role: '原型开发协作',
+    desc: '把需求拆成可执行任务，借助 AI 搭建原型、排查问题；我负责明确目标、检查结果并推动修正。',
     tags: ['Web Coding', 'Frontend', 'Debugging'],
-    icon: 'cursor',
+    icon: 'claude',
   },
   {
     type: 'AI',
@@ -43,7 +43,7 @@ const AI_PARTNERS: readonly Tool[] = [
     type: 'AI',
     name: 'Midjourney / Runway',
     role: '视觉生成',
-    desc: '概念草图、风格探索、内容素材——AI 生成 80%，人工精调 20%，比传统流程快 10 倍以上。',
+    desc: '用 AI 辅助概念草图、视觉探索和内容素材制作，结合具体用途筛选结果，再调整细节与表达。',
     tags: ['Image', 'Video', 'Concept'],
     icon: 'midjourney',
     iconUrl: 'https://www.google.com/s2/favicons?domain=midjourney.com&sz=64',
@@ -102,7 +102,7 @@ export default function Collaborators() {
       ref={wrapperRef}
       style={{
         position: 'relative',
-        height: '200vh',
+        height: '160vh',
         backgroundColor: 'transparent',
         color: 'var(--color-ink)',
       }}
@@ -258,6 +258,9 @@ function ToolCard({ tool }: { tool: Tool }) {
       <img
         src={tool.iconUrl ?? `https://cdn.simpleicons.org/${tool.icon}/0a0a0a`}
         alt=""
+        loading="lazy"
+        decoding="async"
+        fetchPriority="low"
         width={22}
         height={22}
         onError={(e) => {

@@ -176,6 +176,51 @@ body {
   }
 }
 
+/* Same paths and timing as the decorative Motion loops, without a JS frame loop. */
+.marquee-track { animation-play-state: var(--marquee-play-state, paused); }
+.ambient-background { visibility: var(--background-visibility, hidden); }
+.ambient-line {
+  animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+  animation-iteration-count: infinite;
+  animation-play-state: var(--background-play-state, paused);
+}
+.ambient-line-one { animation-name: ambient-line-one; animation-duration: 2.2s; }
+.ambient-line-two { animation-name: ambient-line-two; animation-duration: 2.6s; }
+.ambient-line-three { animation-name: ambient-line-three; animation-duration: 2.8s; }
+.ambient-line-four { animation-name: ambient-line-four; animation-duration: 2.4s; }
+@keyframes ambient-line-one {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(18px, -12px) rotate(4deg); }
+}
+@keyframes ambient-line-two {
+  0%, 100% { transform: translate(0, 0) rotate(-7deg); }
+  50% { transform: translate(-14px, 18px) rotate(-12deg); }
+}
+@keyframes ambient-line-three {
+  0%, 100% { transform: translate(0, 0) rotate(8deg); }
+  50% { transform: translate(-22px, -10px) rotate(14deg); }
+}
+@keyframes ambient-line-four {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(16px, 10px) rotate(-5deg); }
+}
+.scroll-hint-arrow {
+  animation: scroll-hint-arrow 1.4s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+  animation-play-state: var(--hint-play-state, running);
+}
+.scroll-hint-text {
+  animation: scroll-hint-text 1.8s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+  animation-play-state: var(--hint-play-state, running);
+}
+@keyframes scroll-hint-arrow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+@keyframes scroll-hint-text {
+  0%, 100% { opacity: 0.62; }
+  50% { opacity: 1; }
+}
+
 /* ========== Glitch (JASON 大标题故障艺术效果) ========== */
 .glitch {
   position: relative;

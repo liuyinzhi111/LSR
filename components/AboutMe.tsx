@@ -9,6 +9,7 @@ import {
   type MotionValue,
 } from 'framer-motion';
 import SectionTitle from './SectionTitle';
+import DotField from './DotField';
 
 type Keyword = {
   letter: string;
@@ -23,43 +24,43 @@ const KEYWORDS: readonly Keyword[] = [
     letter: 'J',
     index: '01',
     title: 'Judgment',
-    heading: '判断力是 PM 的核心武器。',
-    desc: '面对模糊需求、不确定技术、有限资源，我做的每一个决策都建立在对用户、对业务、对 AI 能力边界的清醒判断之上。',
+    heading: '用真实问题，判断 AI 的价值。',
+    desc: '从用户需求和现有流程出发，结合具体任务比较效果、成本与可控性，判断一项新的 AI 能力适合解决什么问题。',
   },
   {
     letter: 'A',
     index: '02',
     title: 'Augmented',
-    heading: '用 AI 把自己放大十倍。',
-    desc: 'Prompt Engineering、工作流搭建、AI 辅助设计与写作——我不是在用工具，我是在用 AI 重新定义一个人能完成的工作量级。',
+    heading: '让 AI 成为日常工作的协作者。',
+    desc: '我把 AI 用在信息研究、原型搭建和内容创作中，持续调整人与工具的分工，让目标、上下文和验收标准更清楚。',
   },
   {
     letter: 'S',
     index: '03',
     title: 'Shipping',
-    heading: '想法不落地等于零。',
-    desc: '从需求定义到原型验证，从工作流搭建到产品上线，我习惯把事情做完，而不只是做好看的 PPT。',
+    heading: '把想法推进成可用的结果。',
+    desc: '我有用户研究、方案设计、研发协同和上线迭代的实践，也会借助 AI 将关键设想做成可体验的原型，尽早发现问题、验证方向。',
   },
   {
     letter: 'O',
     index: '04',
     title: 'Orchestrate',
-    heading: '把 LLM、RAG、Agent 串成真正能跑的系统。',
-    desc: 'Coze、Dify、Prompt 链路——我做的不是单点 AI 功能，是能接进业务的完整工作流。',
+    heading: '把模型、工具和知识组织成工作流。',
+    desc: '围绕具体任务，连接模型、知识库与工具，把反复使用的方法沉淀成流程和 Skill，减少每次从头摸索。',
   },
   {
     letter: 'N',
     index: '05',
     title: 'Native',
-    heading: 'AI Native 不是标签，是思维方式。',
-    desc: '我从产品视角理解模型能力边界，从工程视角评估实现路径，在两者之间找到真正可交付的解法。',
+    heading: '持续跟进前沿，持续更新判断。',
+    desc: '研究新模型、Agent 和开源项目，关注它们的能力边界与适用条件，再判断哪些变化值得带入自己的工作。',
   },
   {
     letter: 'D',
     index: '06',
-    title: 'Doing',
-    heading: '想清楚就开干，不等完美方案。',
-    desc: '不停留在 PPT 与白板，直接动手做 Demo、跑工作流、推上线——把想法变成能跑的东西，是我对自己最低的要求。',
+    title: 'Documenting',
+    heading: '把实践变成可复用的经验。',
+    desc: '记录学习与实践中的问题、过程和判断，整理成可检索的知识和通俗的 AI 内容，让经验能够被自己复用，也能被别人理解。',
   },
 ];
 
@@ -105,40 +106,7 @@ export default function AboutMe() {
           padding: '5.5vh clamp(80px, 16vw, 240px) 8vh',
         }}
       >
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage:
-              'radial-gradient(circle 120px at var(--dot-press-x, -200px) var(--dot-press-y, -200px), rgba(255,90,26,0.18), transparent 62%), radial-gradient(rgba(10,10,10,0.08) 1px, transparent 1px)',
-            backgroundBlendMode: 'multiply',
-            backgroundSize: '24px 24px',
-            pointerEvents: 'none',
-            zIndex: 0,
-            WebkitMaskImage:
-              'linear-gradient(180deg, transparent 0%, #000 14%, #000 82%, transparent 100%)',
-            maskImage:
-              'linear-gradient(180deg, transparent 0%, #000 14%, #000 82%, transparent 100%)',
-          }}
-        />
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage:
-              'radial-gradient(rgba(255,90,26,0.55) 1.6px, transparent 2.2px)',
-            backgroundSize: '24px 24px',
-            backgroundPosition: '0 0',
-            pointerEvents: 'none',
-            zIndex: 0,
-            WebkitMaskImage:
-              'radial-gradient(circle 110px at var(--dot-press-x, -300px) var(--dot-press-y, -300px), #000 0%, rgba(0,0,0,0.6) 55%, transparent 100%)',
-            maskImage:
-              'radial-gradient(circle 110px at var(--dot-press-x, -300px) var(--dot-press-y, -300px), #000 0%, rgba(0,0,0,0.6) 55%, transparent 100%)',
-          }}
-        />
+        <DotField color="rgba(10,10,10,0.08)" fadeIn="14%" fadeOut="82%" />
 
         <header style={{ position: 'relative', zIndex: 2, textAlign: 'center', marginBottom: '4vh' }}>
           <SectionTitle style={{ fontSize: 'clamp(3.5rem, 10vw, 8rem)', lineHeight: 1 }}>
@@ -281,7 +249,10 @@ function Letter({
     <motion.li
       onMouseEnter={onActivate}
       onMouseLeave={onDeactivate}
-      onClick={onToggle}
+      onClick={() => {
+        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) onActivate();
+        else onToggle();
+      }}
       style={{
         position: 'relative',
         cursor: 'pointer',
@@ -294,7 +265,7 @@ function Letter({
         animate={{
           scale: isActive ? 1.08 : 1,
         }}
-        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
         style={{
           display: 'block',
           fontFamily: 'var(--font-display)',
@@ -303,7 +274,7 @@ function Letter({
           lineHeight: 1,
           letterSpacing: '-0.05em',
           color: anyActive ? (isActive ? 'var(--color-ink)' : 'rgba(10,10,10,0.22)') : 'var(--color-ink)',
-          transition: 'color 0.3s ease',
+          transition: 'color 0.16s ease',
           transformOrigin: 'center center',
           willChange: 'transform',
         }}
@@ -319,7 +290,7 @@ function Letter({
             initial={{ opacity: 0, x: side === 'left' ? 12 : -12 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: side === 'left' ? 12 : -12 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            transition={{ duration: 0.16, ease: 'easeOut' }}
             style={{
               position: 'absolute',
               top: '50%',
@@ -344,16 +315,16 @@ function Letter({
 
 function InfoPanel({ active }: { active: Keyword | null }) {
   return (
-    <div style={{ minHeight: 'clamp(220px, 32vh, 320px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <AnimatePresence mode="wait">
+    <div style={{ minHeight: 'clamp(220px, 32vh, 320px)', display: 'grid', alignItems: 'center', justifyItems: 'center' }}>
+      <AnimatePresence mode="sync" initial={false}>
         {active ? (
           <motion.div
             key={active.letter + active.index}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.28, ease: 'easeOut' }}
-            style={{ display: 'flex', flexDirection: 'column', gap: '14px', textAlign: 'center', maxWidth: '480px' }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            style={{ gridArea: '1 / 1', display: 'flex', flexDirection: 'column', gap: '14px', textAlign: 'center', maxWidth: '480px' }}
           >
             <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'clamp(1.1rem, 1.6vw, 1.35rem)', lineHeight: 1.4, color: 'var(--color-ink)', margin: 0 }}>
               {active.heading}
@@ -368,8 +339,8 @@ function InfoPanel({ active }: { active: Keyword | null }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.28 }}
-            style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', letterSpacing: '0.25em', color: 'var(--color-muted)', textTransform: 'uppercase', textAlign: 'center' }}
+            transition={{ duration: 0.14 }}
+            style={{ gridArea: '1 / 1', fontFamily: 'var(--font-mono)', fontSize: '12px', letterSpacing: '0.25em', color: 'var(--color-muted)', textTransform: 'uppercase', textAlign: 'center' }}
           >
             悬停字母 · Hover a letter
           </motion.p>

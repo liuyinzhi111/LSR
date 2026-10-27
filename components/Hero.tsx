@@ -1,13 +1,11 @@
 'use client';
 
 import { useRef } from 'react';
-import type { CSSProperties } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import BigMarquee from './BigMarquee';
 
 const NAV_HEIGHT = 60;
 const RESUME_URL = '/resume/AI%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86.pdf';
-const RESUME_DOWNLOAD_NAME = '刘盛瑞_AI产品经理_简历.pdf';
 
 export default function Hero() {
   // wrapper 是文档流中的非 sticky 占位容器（高 100vh），随页面正常滚动；
@@ -169,7 +167,7 @@ export default function Hero() {
           lineHeight: 1.4,
         }}
       >
-        <span style={{ letterSpacing: '0.04em' }}>Prompt to Product</span>
+        <span style={{ letterSpacing: '0.04em' }}>从前沿 AI，到真实应用</span>
         <span
           style={{
             fontFamily: 'var(--font-mono)',

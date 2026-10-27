@@ -73,20 +73,16 @@ export default function ScrollHint() {
             boxShadow: '0 16px 40px rgba(10,10,10,0.08)',
           }}
         >
-          <motion.span
+          <span
+            className="scroll-hint-arrow"
             aria-hidden="true"
-            animate={{ y: [0, 4, 0] }}
-            transition={{ duration: 1.4, ease: 'easeInOut', repeat: Infinity }}
             style={{ color: '#ff5a1a', fontSize: '14px', lineHeight: 1 }}
           >
             ↓
-          </motion.span>
-          <motion.span
-            animate={{ opacity: [0.62, 1, 0.62] }}
-            transition={{ duration: 1.8, ease: 'easeInOut', repeat: Infinity }}
-          >
+          </span>
+          <span className="scroll-hint-text">
             向下滚动继续浏览
-          </motion.span>
+          </span>
         </motion.div>
       )}
     </AnimatePresence>

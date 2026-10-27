@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   motion,
-  useMotionTemplate,
   useMotionValue,
   useMotionValueEvent,
   useScroll,
@@ -18,17 +17,89 @@ import {
  * 露出下方 Hero 页；最终只剩屏幕中心一块 SQUARE 边长的小正方形，
  * 随后 sticky 结束，视频被带出视口。
  *
- * 视频文件路径：/public/videos/intro.mp4
+ * 网页播放：/public/videos/intro-web.mp4；原始文件 intro.mp4 保留不变。
  */
 export default function IntroVideo({ children }: { children: ReactNode }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [paths, setPaths] = useState<string[]>([]);
   const [viewBox, setViewBox] = useState('0 0 1000 400');
 
-  const { scrollYProgress } = useScroll({
+  // 开场期间短暂预解码；正式播放后按可见性启停。
+  useEffect(() => {
+    const video = videoRef.current;
+    const wrapper = wrapperRef.current;
+    if (!video || !wrapper) return;
+    let introComplete = !document.getElementById('intro');
+    let inView = wrapper.getBoundingClientRect().bottom > 0;
+    let prepared = false;
+    let preparing = false;
+    let warmupFrame = 0;
+    let warmupTimer = 0;
+    let disposed = false;
+    const cancelWarmup = () => {
+      if (warmupFrame) video.cancelVideoFrameCallback?.(warmupFrame);
+      window.clearTimeout(warmupTimer);
+      warmupFrame = 0;
+      warmupTimer = 0;
+      preparing = false;
+    };
+    const finishWarmup = () => {
+      cancelWarmup();
+      if (disposed || introComplete) return;
+      prepared = true;
+      video.pause();
+      // 只在开场遮罩内预解码，正式展示仍从原片第一帧开始。
+      video.currentTime = 0;
+    };
+    const prepareDecoder = () => {
+      if (disposed || introComplete || prepared || preparing || document.hidden || !inView || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
+      preparing = true;
+      void video.play().then(() => {
+        if (disposed || !preparing || introComplete) return;
+        if (video.requestVideoFrameCallback) warmupFrame = video.requestVideoFrameCallback(finishWarmup);
+        warmupTimer = window.setTimeout(finishWarmup, 200);
+      }).catch(() => { cancelWarmup(); });
+    };
+    const syncPlayback = () => {
+      if (document.hidden || !inView) {
+        cancelWarmup();
+        video.pause();
+      } else if (!introComplete) {
+        prepareDecoder();
+      } else if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+        void video.play().catch(() => {});
+      }
+    };
+    const onIntroComplete = () => { introComplete = true; cancelWarmup(); syncPlayback(); };
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      syncPlayback();
+    });
+    observer.observe(wrapper);
+    window.addEventListener('intro-animation-complete', onIntroComplete);
+    document.addEventListener('visibilitychange', syncPlayback);
+    video.addEventListener('loadeddata', prepareDecoder);
+    video.addEventListener('canplay', syncPlayback);
+    syncPlayback();
+    return () => {
+      disposed = true;
+      cancelWarmup();
+      observer.disconnect();
+      window.removeEventListener('intro-animation-complete', onIntroComplete);
+      document.removeEventListener('visibilitychange', syncPlayback);
+      video.removeEventListener('loadeddata', prepareDecoder);
+      video.removeEventListener('canplay', syncPlayback);
+      video.pause();
+    };
+  }, []);
+
+  const { scrollYProgress: pinProgress } = useScroll({
     target: wrapperRef,
-    offset: ['start start', 'end start'],
+    offset: ['start start', 'end end'],
   });
+  // 按实际固定区间推进；保留原关键帧比例，让缩短后的区间仍完整播完签名与落款。
+  const scrollYProgress = useTransform(pinProgress, [0, 1], [0, 5 / 6]);
 
   // 跟随视口尺寸计算最终小正方形的 inset 像素值，保证严格正方
   const [insets, setInsets] = useState({ h: 0, v: 0 });
@@ -51,7 +122,7 @@ export default function IntroVideo({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     fetch('/signature.svg')
-      .then((r) => r.text())
+      .then((r) => { if (!r.ok) throw new Error('Signature unavailable'); return r.text(); })
       .then((svg) => {
         if (cancelled) return;
         const vb = svg.match(/viewBox="([^"]+)"/)?.[1];
@@ -67,21 +138,25 @@ export default function IntroVideo({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  // 滚动 0→85% 区间内，inset 从 0 一路加到“只剩中心小正方形”；85%→100% 保持
-  // wrapper 600vh：sticky pin 区间约为 0 → 0.833；
-  // 所有 intro 动画必须在 0.83 之前完成，签完后再继续滚才会离开 sticky。
+  // 原关键帧范围保留为 0 → 5/6；现在映射到 300vh 容器中的 200vh 固定区间。
+  // 0.83 处落款完成，再继续滚动才会离开固定区间。
   const insetH = useTransform(scrollYProgress, [0, 0.32, 1], [0, insets.h, insets.h]);
   const insetV = useTransform(scrollYProgress, [0, 0.32, 1], [0, insets.v, insets.v]);
   // 初始无圆角（视频铺满），随裁切进度 0→0.32 圆角从 0 渐变到 28px
   const radius = useTransform(scrollYProgress, [0, 0.08, 0.32, 1], [0, 0, 28, 28]);
-  const clipPath = useMotionTemplate`inset(${insetV}px ${insetH}px ${insetV}px ${insetH}px round ${radius}px)`;
+  // 未滚动时视频完全铺满，不施加无意义的全屏裁切，允许直接合成视频帧。
+  const clipPath = useTransform([insetV, insetH, radius], ([v, h, r]: number[]) =>
+    v === 0 && h === 0 && r === 0 ? 'none' : `inset(${v}px ${h}px ${v}px ${h}px round ${r}px)`
+  );
+  const heroVisibility = useTransform(scrollYProgress, (progress) => progress <= 0 ? 'hidden' : 'visible');
   const overlayOpacity = useTransform(scrollYProgress, [0.28, 0.40], [0, 0.82]);
+  const overlayVisibility = useTransform(overlayOpacity, (opacity) => opacity === 0 ? 'hidden' : 'visible');
   const signatureOpacity = useTransform(scrollYProgress, [0.28, 0.36], [0, 1]);
   const signatureY = useTransform(scrollYProgress, [0.28, 0.36], [18, 0]);
   const captionOpacity = useTransform(scrollYProgress, [0.78, 0.83], [0, 1]);
   const captionY = useTransform(scrollYProgress, [0.78, 0.83], [12, 0]);
   return (
-    <div ref={wrapperRef} style={{ position: 'relative', height: '600vh' }}>
+    <div ref={wrapperRef} data-intro-video style={{ position: 'relative', height: '300vh' }}>
       <div
         style={{
           position: 'sticky',
@@ -91,15 +166,17 @@ export default function IntroVideo({ children }: { children: ReactNode }) {
           overflow: 'hidden',
         }}
       >
-        <div
+        <motion.div
           style={{
             position: 'absolute',
             inset: 0,
             zIndex: 1,
+            // 全屏视频遮住时不绘制大型跑马灯；开始裁切后原样露出。
+            visibility: heroVisibility,
           }}
         >
           {children}
-        </div>
+        </motion.div>
 
         <div
           style={{
@@ -107,13 +184,20 @@ export default function IntroVideo({ children }: { children: ReactNode }) {
             inset: 0,
             zIndex: 2,
             pointerEvents: 'none',
-            // drop-shadow 作用于被裁切后的可见区域，让视频窗口“浮”在 Hero 上面
-            filter:
-              'drop-shadow(0 24px 48px rgba(0,0,0,0.45)) drop-shadow(0 4px 12px rgba(0,0,0,0.25))',
-            WebkitFilter:
-              'drop-shadow(0 24px 48px rgba(0,0,0,0.45)) drop-shadow(0 4px 12px rgba(0,0,0,0.25))',
           }}
         >
+        {/* 阴影跟随原裁切边界；独立绘制，避免对视频每一帧执行两遍 drop-shadow。 */}
+        <motion.div
+          style={{
+            position: 'absolute',
+            top: insetV,
+            bottom: insetV,
+            left: insetH,
+            right: insetH,
+            borderRadius: radius,
+            boxShadow: '0 24px 96px rgba(0,0,0,0.45), 0 4px 24px rgba(0,0,0,0.25)',
+          }}
+        />
         <motion.div
           style={{
             position: 'absolute',
@@ -126,8 +210,8 @@ export default function IntroVideo({ children }: { children: ReactNode }) {
           }}
         >
           <video
-            src="/videos/intro.mp4"
-            autoPlay
+            ref={videoRef}
+            src="/videos/intro-web.mp4"
             muted
             loop
             playsInline
@@ -153,8 +237,9 @@ export default function IntroVideo({ children }: { children: ReactNode }) {
             backdropFilter: 'blur(3px)',
             WebkitBackdropFilter: 'blur(3px)',
             opacity: overlayOpacity,
+            visibility: overlayVisibility,
             pointerEvents: 'none',
-            // 用同一个 clipPath 让灰色蒙版只覆盖视频窗口区域
+            // 用同一个 clipPath 让灰色蒙版只覆盖视频窗口区域。
             clipPath,
             WebkitClipPath: clipPath,
           }}
@@ -242,16 +327,16 @@ function SignatureStroke({
 }) {
   const dashoffset = useMotionValue(1);
 
-  const computeOffset = (p: number): number => {
+  const computeOffset = useCallback((p: number): number => {
     const t = (p - start) / (end - start);
     if (t <= 0) return 1;
     if (t >= 1) return 0;
     return 1 - t;
-  };
+  }, [start, end]);
 
   useEffect(() => {
     dashoffset.set(computeOffset(progress.get()));
-  }, []);
+  }, [computeOffset, dashoffset, progress]);
 
   useMotionValueEvent(progress, 'change', (p) => {
     dashoffset.set(computeOffset(p));

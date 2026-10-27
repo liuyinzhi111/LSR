@@ -32,7 +32,7 @@ export default function FullscreenToggle() {
     const docAny = document as Document & {
       webkitFullscreenElement?: Element;
     };
-    if (!document.documentElement.requestFullscreen && !(docAny as any).webkitRequestFullscreen) {
+    if (!document.documentElement.requestFullscreen && !('webkitRequestFullscreen' in document.documentElement)) {
       setSupported(false);
       return;
     }

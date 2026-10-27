@@ -25,7 +25,7 @@ const bigMarqueeTextBase: CSSProperties = {
   display: 'flex',
   flexWrap: 'nowrap',
   width: 'max-content',
-  willChange: 'transform',
+  willChange: 'var(--marquee-will-change, auto)',
   pointerEvents: 'none',
   userSelect: 'none',
 };
@@ -42,14 +42,19 @@ function BigMarqueeRow({
   duration: number;
 }) {
   const copies = [0, 1, 2, 3];
-  const xKeyframes = direction === 'left' ? ['0%', '-50%'] : ['-50%', '0%'];
 
   return (
     <div style={{ overflow: 'hidden', width: '100%' }}>
-      <motion.div
-        style={{ ...bigMarqueeTextBase, color }}
-        animate={{ x: xKeyframes }}
-        transition={{ duration, ease: 'linear', repeat: Infinity }}
+      <div
+        className="marquee-track"
+        style={{
+          ...bigMarqueeTextBase,
+          color,
+          animationName: `marquee-${direction}`,
+          animationDuration: `${duration}s`,
+          animationTimingFunction: 'linear',
+          animationIterationCount: 'infinite',
+        }}
       >
         {copies.map((i) => (
           <span
@@ -60,7 +65,7 @@ function BigMarqueeRow({
             {text}
           </span>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 }

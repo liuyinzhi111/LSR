@@ -61,7 +61,7 @@ export default function WhatIHaveDone() {
   });
 
   // section 的总滚动高度，独立于动画节奏，避免末尾出现空滚动停顿
-  const SCROLL_VH = 300;
+  const SCROLL_VH = 220;
 
   return (
     <section
@@ -187,8 +187,7 @@ function StackedCard({
   i: number;
   progress: MotionValue<number>;
 }) {
-  // 拉大每张卡片的滚动占比，让动画占据绝大部分 section 滚动距离
-  // 最后一张卡片在 进度 ~0.85 处完成，留 ~0.15 作为小尾巴过渡到下一块
+  // 保留四张卡片的原叠放顺序；最后一张在进度 0.63 处完成，余量用于衔接下一段。
   const SLIDE_STEP = 0.2;
   const SLIDE_DUR = 0.25;
   const start = -0.22 + i * SLIDE_STEP;
@@ -307,6 +306,9 @@ function StackedCard({
         <img
           src={project.image}
           alt={project.title}
+          loading="lazy"
+          decoding="async"
+          fetchPriority="low"
           className="project-image"
           onError={(e) => {
             e.currentTarget.style.display = 'none';

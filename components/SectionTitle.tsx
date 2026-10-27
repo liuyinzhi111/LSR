@@ -13,8 +13,8 @@ export default function SectionTitle({ children, style }: SectionTitleProps) {
     <motion.h2
       initial={{ opacity: 0, scale: 0.94, y: 18 }}
       whileInView={{ opacity: 1, scale: 1, y: 0 }}
-      viewport={{ once: false, amount: 0.55 }}
-      transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+      viewport={{ once: false, amount: 0.2 }}
+      transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
       style={{
         fontFamily: 'var(--font-display)',
         fontWeight: 800,

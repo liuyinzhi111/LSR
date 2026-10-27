@@ -5,6 +5,7 @@ import ScrollHint from '@/components/ScrollHint';
 import AnimatedLineBackground from '@/components/AnimatedLineBackground';
 import CursorDepression from '@/components/CursorDepression';
 import FullscreenToggle from '@/components/FullscreenToggle';
+import AnimationActivity from '@/components/AnimationActivity';
 import './globals.css';
 
 const spaceGrotesk = Space_Grotesk({
@@ -59,6 +60,7 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <AnimationActivity />
         <div
           aria-hidden="true"
           style={{

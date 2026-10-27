@@ -1,11 +1,10 @@
 'use client';
 
-import { motion } from 'framer-motion';
-
 export default function AnimatedLineBackground() {
   return (
     <div
       aria-hidden="true"
+      className="ambient-background"
       style={{
         position: 'absolute',
         inset: 0,
@@ -14,9 +13,8 @@ export default function AnimatedLineBackground() {
         overflow: 'hidden',
       }}
     >
-      <motion.div
-        animate={{ x: [0, 18, 0], y: [0, -12, 0], rotate: [0, 4, 0] }}
-        transition={{ duration: 2.2, ease: 'easeInOut', repeat: Infinity }}
+      <div
+        className="ambient-line ambient-line-one"
         style={{
           position: 'absolute',
           top: '-34vh',
@@ -27,9 +25,8 @@ export default function AnimatedLineBackground() {
           borderRadius: '50%',
         }}
       />
-      <motion.div
-        animate={{ x: [0, -14, 0], y: [0, 18, 0], rotate: [-7, -12, -7] }}
-        transition={{ duration: 2.6, ease: 'easeInOut', repeat: Infinity }}
+      <div
+        className="ambient-line ambient-line-two"
         style={{
           position: 'absolute',
           top: '-8vh',
@@ -40,9 +37,8 @@ export default function AnimatedLineBackground() {
           borderRadius: '50%',
         }}
       />
-      <motion.div
-        animate={{ x: [0, -22, 0], y: [0, -10, 0], rotate: [8, 14, 8] }}
-        transition={{ duration: 2.8, ease: 'easeInOut', repeat: Infinity }}
+      <div
+        className="ambient-line ambient-line-three"
         style={{
           position: 'absolute',
           right: '-10vw',
@@ -53,9 +49,8 @@ export default function AnimatedLineBackground() {
           borderRadius: '50%',
         }}
       />
-      <motion.div
-        animate={{ x: [0, 16, 0], y: [0, 10, 0], rotate: [0, -5, 0] }}
-        transition={{ duration: 2.4, ease: 'easeInOut', repeat: Infinity }}
+      <div
+        className="ambient-line ambient-line-four"
         style={{
           position: 'absolute',
           left: '18vw',

@@ -1,8 +1,9 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import SectionTitle from './SectionTitle';
+import DotField from './DotField';
 
 type Skill = {
   idx: string;
@@ -32,9 +33,9 @@ const SKILLS: readonly Skill[] = [
   },
   {
     idx: '04',
-    title: '模型评测 & AI 设计',
-    desc: '用可量化的评测框架判断模型优劣，同时能用 AI 工具完成设计、写作、视频内容的生产，从评估到交付全链路自己跑通。',
-    tags: ['Benchmark', 'Midjourney', 'Runway'],
+    title: '模型评测与应用判断',
+    desc: '结合模型评测经验，围绕真实任务制定验收标准、分析 Bad Case，比较效果、成本与可控性，用评测结果推动方案迭代。',
+    tags: ['Evaluation', 'Bad Case', 'Iteration'],
   },
 ];
 
@@ -47,14 +48,24 @@ const getRelativeIndex = (index: number, active: number, total: number) => {
 
 export default function WhatICanDo() {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [carouselWidth, setCarouselWidth] = useState(0);
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+    const observer = new ResizeObserver(([entry]) => setCarouselWidth(entry.contentRect.width));
+    observer.observe(carousel);
+    return () => observer.disconnect();
+  }, []);
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
     offset: ['start start', 'end end'],
   });
 
   const [active, setActive] = useState(0);
+  const activeRef = useRef(0);
 
-  // 愑动进度 → 激活卡片索引。标题 pin 后留首尾缓冲。
+  // 滚动进度 → 激活卡片索引。标题 pin 后留首尾缓冲。
   // 0~0.10  : 锁屏、卡 0
   // 0.10~0.85 : 平均射入 4 张卡
   // 0.85~1   : 卡 3、准备离开
@@ -66,11 +77,14 @@ export default function WhatICanDo() {
       const local = (v - 0.1) / 0.75; // 0 → 1
       idx = Math.min(SKILLS.length - 1, Math.floor(local * SKILLS.length));
     }
-    setActive((prev) => (prev === idx ? prev : idx));
+    if (activeRef.current !== idx) {
+      activeRef.current = idx;
+      setActive(idx);
+    }
   });
 
-  // section 总高度：pin 时长 = (SCROLL_VH - 100)vh。这里 4 张卡片 → 给 300vh 足够轮转
-  const SCROLL_VH = 300;
+  // 140vh 的固定区间保留四张卡的原轮转顺序，减少连续滚动距离。
+  const SCROLL_VH = 240;
 
   return (
     <section
@@ -95,40 +109,7 @@ export default function WhatICanDo() {
           padding: '0 8vw',
         }}
       >
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage:
-              'radial-gradient(circle 120px at var(--dot-press-x, -200px) var(--dot-press-y, -200px), rgba(255,90,26,0.18), transparent 62%), radial-gradient(var(--color-border) 1px, transparent 1px)',
-            backgroundBlendMode: 'multiply',
-            backgroundSize: '24px 24px',
-            pointerEvents: 'none',
-            zIndex: 0,
-            WebkitMaskImage:
-              'linear-gradient(180deg, transparent 0%, #000 12%, #000 84%, transparent 100%)',
-            maskImage:
-              'linear-gradient(180deg, transparent 0%, #000 12%, #000 84%, transparent 100%)',
-          }}
-        />
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage:
-              'radial-gradient(rgba(255,90,26,0.55) 1.6px, transparent 2.2px)',
-            backgroundSize: '24px 24px',
-            backgroundPosition: '0 0',
-            pointerEvents: 'none',
-            zIndex: 0,
-            WebkitMaskImage:
-              'radial-gradient(circle 110px at var(--dot-press-x, -300px) var(--dot-press-y, -300px), #000 0%, rgba(0,0,0,0.6) 55%, transparent 100%)',
-            maskImage:
-              'radial-gradient(circle 110px at var(--dot-press-x, -300px) var(--dot-press-y, -300px), #000 0%, rgba(0,0,0,0.6) 55%, transparent 100%)',
-          }}
-        />
+        <DotField color="var(--color-border)" fadeIn="12%" fadeOut="84%" />
 
         <header
           style={{
@@ -156,6 +137,7 @@ export default function WhatICanDo() {
         </header>
 
         <div
+          ref={carouselRef}
           className="skills-carousel"
           style={{
             position: 'relative',
@@ -175,15 +157,14 @@ export default function WhatICanDo() {
                 key={skill.idx}
                 className="skill-card skill-carousel-card"
                 animate={{
-                  left: `${50 + relative * 28}%`,
-                  x: '-50%',
+                  x: `calc(-50% + ${relative * carouselWidth * 0.28}px)`,
                   y: '-50%',
                   z: isCenter ? 180 : Math.abs(relative) === 1 ? 0 : -220,
                   rotateY: relative * -46,
                   scale: isCenter ? 1 : 0.82,
                   opacity: isVisible ? (isCenter ? 1 : 0.42) : 0,
                 }}
-                transition={{ type: 'spring', stiffness: 120, damping: 22 }}
+                transition={{ type: 'spring', stiffness: 280, damping: 30, mass: 0.8 }}
                 style={{
                   position: 'absolute',
                   top: '50%',
