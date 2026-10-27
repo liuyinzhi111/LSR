@@ -95,8 +95,6 @@ export type Project = {
   desc: string;
   tags: readonly string[];
   image: string;
-  imageWidth: number;
-  imageHeight: number;
   url: string;
 };
 
@@ -108,8 +106,6 @@ export const PROJECTS: readonly Project[] = [
     desc: '一款纯前端实现的网页互动文字冒险游戏。用 HTML/CSS/JS 从零构建完整游戏引擎——剧情分支、状态管理、关卡系统、攻略演示，全部自己跑通。它不是模板套壳，是一个能玩的东西。',
     tags: ['HTML', 'CSS', 'JS', 'Game Design', 'Narrative'],
     image: '/images/project1.jpg',
-    imageWidth: 1608,
-    imageHeight: 928,
     url: '/XM/Harrygame-main/index.html',
   },
   {
@@ -119,8 +115,6 @@ export const PROJECTS: readonly Project[] = [
     desc: '用纯前端 + Three.js 在浏览器里造了一个 3D 世界。准星系统、HUD 界面、第一人称视角控制——这件事的意义不在于游戏本身，在于证明 Web 能做到多少人以为它做不到的事。',
     tags: ['Three.js', 'WebGL', 'HUD', '3D', 'Frontend'],
     image: '/images/project2.jpg',
-    imageWidth: 1812,
-    imageHeight: 1139,
     url: '/XM/CFyouxi.html',
   },
   {
@@ -130,8 +124,6 @@ export const PROJECTS: readonly Project[] = [
     desc: '面向 18~28 岁 Z 世代，用玄学语言匹配同频陌生人的社交产品。从市场洞察、用户模型到商业路径，完整输出一份 BRD——不是为了好看，是为了验证一个反常识的产品逻辑能不能成立。',
     tags: ['BRD', 'Market Research', 'Z-Gen', 'Social Product'],
     image: '/images/project3.jpg',
-    imageWidth: 1802,
-    imageHeight: 957,
     url: '/XM/lingpin_BRD.html',
   },
   {
@@ -141,8 +133,6 @@ export const PROJECTS: readonly Project[] = [
     desc: '把产品经理从需求到上线的完整方法论，做成一个可交互的可视化知识库页面。不是文档，是一张能点击、能导航、能被真正用起来的工作地图。',
     tags: ['Interactive', 'PM Methodology', 'Visualization', 'HTML'],
     image: '/images/project4.jpg',
-    imageWidth: 3840,
-    imageHeight: 2160,
     url: '/XM/ai-pm-qieman-academy/index.html',
   },
 ];
