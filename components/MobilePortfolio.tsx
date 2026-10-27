@@ -5,6 +5,16 @@ import { AI_PARTNERS, CONTACTS, CRAFT_INFRA, KEYWORDS, PROFILE, PROJECTS, RESUME
 import styles from './MobilePortfolio.module.css';
 import { COMPACT_QUERY } from './responsive';
 
+const TOOL_ICON_FILES: Record<string, string> = {
+  claude: 'claude.svg',
+  n8n: 'n8n.svg',
+  midjourney: 'midjourney.png',
+  figma: 'figma.svg',
+  obsidian: 'obsidian.svg',
+  visualstudiocode: 'visualstudiocode.png',
+  github: 'github.svg',
+};
+
 export default function MobilePortfolio() {
   return (
     <div className={styles.page}>
@@ -178,7 +188,11 @@ function ToolGroup({ title, tools }: { title: string; tools: readonly Tool[] }) 
             {tools.slice(first, first + 2).map((tool, offset) => {
               const index = first + offset;
               return <button type="button" className={styles.toolCard} key={tool.name} id={`${groupId}-tool-${index}`} aria-expanded={active === index} aria-controls={`${groupId}-detail-${row}`} onClick={() => setActive(active === index ? null : index)}>
-                <span className={styles.toolType}>{tool.type}</span><span className={styles.toolName}>{tool.name}</span><span className={styles.toolRole}>{tool.role}</span><span className={styles.toolToggle} aria-hidden="true" />
+                <span className={styles.toolIdentity}>
+                  <img className={styles.toolIcon} src={`/images/tool-icons/${TOOL_ICON_FILES[tool.icon]}`} alt="" width={28} height={28} loading="lazy" decoding="async" />
+                  <span className={styles.toolType}>{tool.type}</span>
+                </span>
+                <span className={styles.toolName}>{tool.name}</span><span className={styles.toolRole}>{tool.role}</span><span className={styles.toolToggle} aria-hidden="true" />
               </button>;
             })}
             {expanded && <div id={`${groupId}-detail-${row}`} className={styles.toolDescription} role="region" aria-labelledby={`${groupId}-tool-${active}`}><p>{tools[active].desc}</p><Tags tags={tools[active].tags} /></div>}
