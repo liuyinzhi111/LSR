@@ -24,6 +24,16 @@ html {
   scroll-behavior: smooth;
 }
 
+.compact-portfolio { display: none; }
+.desktop-portfolio { display: block; }
+@media (max-width: 1024px) {
+  .compact-portfolio { display: block; }
+  .desktop-portfolio { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
 /* ===== Intro Animation (GSAP 驱动) ===== */
 #intro {
   position: fixed;

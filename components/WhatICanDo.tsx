@@ -5,39 +5,7 @@ import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import SectionTitle from './SectionTitle';
 import DotField from './DotField';
 
-type Skill = {
-  idx: string;
-  title: string;
-  desc: string;
-  tags: readonly string[];
-};
-
-const SKILLS: readonly Skill[] = [
-  {
-    idx: '01',
-    title: 'AI 产品设计',
-    desc: '从用户需求出发，定义 AI 功能的交互逻辑与体验边界，让模型能力真正服务于业务场景，而不是技术展示。',
-    tags: ['PRD', 'User Story', 'AI UX'],
-  },
-  {
-    idx: '02',
-    title: '工作流搭建',
-    desc: '基于 Coze 与 Dify 搭建多节点 Agent 工作流，把 LLM、RAG、工具调用串成稳定可复用的业务链路，让非技术团队也能跑通 AI 流程。',
-    tags: ['Coze', 'Dify', 'RAG', 'Agent'],
-  },
-  {
-    idx: '03',
-    title: 'Prompt Engineering',
-    desc: '不只是写提示词，而是设计完整的 Prompt 结构——角色定义、上下文注入、输出约束、边界处理，让模型稳定输出可用结果。',
-    tags: ['Prompt Design', 'Few-shot', 'CoT'],
-  },
-  {
-    idx: '04',
-    title: '模型评测与应用判断',
-    desc: '结合模型评测经验，围绕真实任务制定验收标准、分析 Bad Case，比较效果、成本与可控性，用评测结果推动方案迭代。',
-    tags: ['Evaluation', 'Bad Case', 'Iteration'],
-  },
-];
+import { SKILLS } from './portfolio-content';
 
 const getRelativeIndex = (index: number, active: number, total: number) => {
   const raw = index - active;

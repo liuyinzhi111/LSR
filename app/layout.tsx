@@ -1,11 +1,5 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Space_Grotesk, JetBrains_Mono, Inter, Barlow_Condensed } from 'next/font/google';
-import IntroAnimation from '@/components/IntroAnimation';
-import ScrollHint from '@/components/ScrollHint';
-import AnimatedLineBackground from '@/components/AnimatedLineBackground';
-import CursorDepression from '@/components/CursorDepression';
-import FullscreenToggle from '@/components/FullscreenToggle';
-import AnimationActivity from '@/components/AnimationActivity';
 import './globals.css';
 
 const spaceGrotesk = Space_Grotesk({
@@ -41,6 +35,13 @@ export const metadata: Metadata = {
   description: '暗黑极简风格的个人作品集网站',
 };
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#f5f5f3',
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -59,26 +60,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>
-        <AnimationActivity />
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 0,
-            pointerEvents: 'none',
-            overflow: 'hidden',
-          }}
-        >
-          <AnimatedLineBackground />
-        </div>
-        <IntroAnimation />
-        <CursorDepression />
-        <ScrollHint />
-        <FullscreenToggle />
-        <div id="site" style={{ position: 'relative', zIndex: 1 }}>{children}</div>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

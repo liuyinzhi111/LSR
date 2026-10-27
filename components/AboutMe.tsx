@@ -11,58 +11,7 @@ import {
 import SectionTitle from './SectionTitle';
 import DotField from './DotField';
 
-type Keyword = {
-  letter: string;
-  index: string;
-  title: string;
-  heading: string;
-  desc: string;
-};
-
-const KEYWORDS: readonly Keyword[] = [
-  {
-    letter: 'J',
-    index: '01',
-    title: 'Judgment',
-    heading: '用真实问题，判断 AI 的价值。',
-    desc: '从用户需求和现有流程出发，结合具体任务比较效果、成本与可控性，判断一项新的 AI 能力适合解决什么问题。',
-  },
-  {
-    letter: 'A',
-    index: '02',
-    title: 'Augmented',
-    heading: '让 AI 成为日常工作的协作者。',
-    desc: '我把 AI 用在信息研究、原型搭建和内容创作中，持续调整人与工具的分工，让目标、上下文和验收标准更清楚。',
-  },
-  {
-    letter: 'S',
-    index: '03',
-    title: 'Shipping',
-    heading: '把想法推进成可用的结果。',
-    desc: '我有用户研究、方案设计、研发协同和上线迭代的实践，也会借助 AI 将关键设想做成可体验的原型，尽早发现问题、验证方向。',
-  },
-  {
-    letter: 'O',
-    index: '04',
-    title: 'Orchestrate',
-    heading: '把模型、工具和知识组织成工作流。',
-    desc: '围绕具体任务，连接模型、知识库与工具，把反复使用的方法沉淀成流程和 Skill，减少每次从头摸索。',
-  },
-  {
-    letter: 'N',
-    index: '05',
-    title: 'Native',
-    heading: '持续跟进前沿，持续更新判断。',
-    desc: '研究新模型、Agent 和开源项目，关注它们的能力边界与适用条件，再判断哪些变化值得带入自己的工作。',
-  },
-  {
-    letter: 'D',
-    index: '06',
-    title: 'Documenting',
-    heading: '把实践变成可复用的经验。',
-    desc: '记录学习与实践中的问题、过程和判断，整理成可检索的知识和通俗的 AI 内容，让经验能够被自己复用，也能被别人理解。',
-  },
-];
+import { KEYWORDS, type Keyword } from './portfolio-content';
 
 const TOTAL = KEYWORDS.length;
 const HALF = Math.ceil(TOTAL / 2);

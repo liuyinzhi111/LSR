@@ -9,6 +9,7 @@ import {
   useTransform,
   type MotionValue,
 } from 'framer-motion';
+import { COMPACT_QUERY } from './responsive';
 
 /**
  * IntroVideo —— 开场动画结束后、Hero 之前的覆盖层视频。
@@ -27,6 +28,7 @@ export default function IntroVideo({ children }: { children: ReactNode }) {
 
   // 开场期间短暂预解码；正式播放后按可见性启停。
   useEffect(() => {
+    if (window.matchMedia(COMPACT_QUERY).matches) return;
     const video = videoRef.current;
     const wrapper = wrapperRef.current;
     if (!video || !wrapper) return;
@@ -81,6 +83,8 @@ export default function IntroVideo({ children }: { children: ReactNode }) {
     document.addEventListener('visibilitychange', syncPlayback);
     video.addEventListener('loadeddata', prepareDecoder);
     video.addEventListener('canplay', syncPlayback);
+    // The SSR video has preload=none, so phones do not download the hidden desktop video.
+    video.preload = 'auto';
     syncPlayback();
     return () => {
       disposed = true;
@@ -215,7 +219,7 @@ export default function IntroVideo({ children }: { children: ReactNode }) {
             muted
             loop
             playsInline
-            preload="auto"
+            preload="none"
             style={{
               position: 'absolute',
               inset: 0,

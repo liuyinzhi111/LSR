@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
+import { COMPACT_QUERY } from './responsive';
 
 /**
  * 品牌开场动画（5 阶段，GSAP 3 timeline 串联）
@@ -23,6 +24,8 @@ export default function IntroAnimation() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
+    // Compact screens start directly in the page, with no scroll lock or opening overlay.
+    if (window.matchMedia(COMPACT_QUERY).matches) return;
     if (!introRef.current || !flashRef.current || !transitionBgRef.current || !lettersRef.current || !nameRef.current || !welcomeRef.current || !loadingRef.current) {
       return;
     }

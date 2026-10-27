@@ -3,17 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 
-type ContactRow = {
-  label: string;
-  value: string;
-};
-
-const CONTACTS: readonly ContactRow[] = [
-  { label: 'EMAIL', value: '2499694881@qq.com' },
-  { label: 'PHONE', value: '157 0012 9377' },
-  { label: 'WECHAT', value: 'Rnlfd-7' },
-  { label: 'WECHAT QR', value: '/images/wechat-qr.jpg' },
-];
+import { CONTACTS } from './portfolio-content';
 
 const SLOGAN_LINES: readonly string[] = ["LET'S BUILD", 'SOMETHING', 'SHARP.'];
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { COMPACT_QUERY } from './responsive';
 
 export default function FullscreenToggle() {
   const [isFs, setIsFs] = useState(false);
@@ -29,6 +30,7 @@ export default function FullscreenToggle() {
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
+    if (window.matchMedia(COMPACT_QUERY).matches) return;
     const docAny = document as Document & {
       webkitFullscreenElement?: Element;
     };
@@ -54,6 +56,7 @@ export default function FullscreenToggle() {
     // 浏览器禁止无手势进全屏，监听首次交互即尝试进入全屏
     let armed = sessionStorage.getItem('fs-auto-attempted') !== '1';
     const enterOnce = () => {
+      if (window.matchMedia(COMPACT_QUERY).matches) return;
       if (!armed) return;
       armed = false;
       sessionStorage.setItem('fs-auto-attempted', '1');
