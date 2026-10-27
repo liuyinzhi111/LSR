@@ -24,8 +24,7 @@ export default function IntroAnimation() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    // Compact screens start directly in the page, with no scroll lock or opening overlay.
-    if (window.matchMedia(COMPACT_QUERY).matches) return;
+    const compact = window.matchMedia(COMPACT_QUERY).matches;
     if (!introRef.current || !flashRef.current || !transitionBgRef.current || !lettersRef.current || !nameRef.current || !welcomeRef.current || !loadingRef.current) {
       return;
     }
@@ -48,15 +47,18 @@ export default function IntroAnimation() {
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
-    // 取 #site 节点用于结尾淡入
-    const siteEl = document.getElementById('site');
+    // Both layouts share one opening overlay; fade in the layout visible at entry.
+    const siteEl = document.getElementById(compact ? 'mobile-site' : 'site');
+    const previousInert = siteEl?.inert ?? false;
+    if (compact && siteEl) siteEl.inert = true;
 
     // ===== 初始状态 =====
     gsap.set(letters, { opacity: 1, y: 0, scale: 1 });
     gsap.set(lettersWrap, { letterSpacing: '0.70em', paddingLeft: '0.70em' });
     // 保持原字距拉伸轨迹，用独立平移代替逐帧改变字距/内边距的布局计算。
     const baseSpacing = parseFloat(getComputedStyle(lettersWrap).letterSpacing);
-    const expandedSpacing = parseFloat(getComputedStyle(lettersWrap).fontSize) * 6;
+    const desktopSpacing = parseFloat(getComputedStyle(lettersWrap).fontSize) * 6;
+    const expandedSpacing = compact ? Math.min(desktopSpacing, window.innerWidth * 0.09) : desktopSpacing;
     const centerSlot = (letters.length - 1) / 2;
     gsap.set(letterSlots, { x: 0, force3D: true });
     gsap.set(nameLetters, { opacity: 0, scaleX: 0.2 });
@@ -79,6 +81,7 @@ export default function IntroAnimation() {
       onComplete: () => {
         if (intro) intro.style.display = 'none';
         document.body.style.overflow = prevOverflow;
+        if (compact && siteEl) siteEl.inert = previousInert;
         window.dispatchEvent(new Event('intro-animation-complete'));
         setDone(true);
       },
@@ -210,6 +213,7 @@ export default function IntroAnimation() {
       document.body.style.overflow = prevOverflow;
       // 兜底：万一卸载时 #site 仍是隐藏的，恢复可见
       if (siteEl) siteEl.style.opacity = '1';
+      if (compact && siteEl) siteEl.inert = previousInert;
     };
   }, []);
 

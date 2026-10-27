@@ -21,6 +21,7 @@ export default function ResponsivePortfolio() {
 
   return (
     <>
+      <IntroAnimation />
       {/* CSS selects the correct layout before hydration. Content stays available in the HTML. */}
       <div className="compact-portfolio"><MobilePortfolio /></div>
       <div className="desktop-portfolio">
@@ -38,7 +39,6 @@ function DesktopPortfolio() {
       <div aria-hidden="true" style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
         <AnimatedLineBackground />
       </div>
-      <IntroAnimation />
       <CursorDepression />
       <ScrollHint />
       <FullscreenToggle />

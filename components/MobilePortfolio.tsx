@@ -17,17 +17,9 @@ const TOOL_ICON_FILES: Record<string, string> = {
 
 export default function MobilePortfolio() {
   return (
-    <div className={styles.page}>
-      <header className={styles.topbar}>
-        <a href="#mobile-home" className={styles.brand} aria-label="返回首页">JASON<span>·</span></a>
-        <a href="#mobile-contact" className={styles.contactLink}>联系我 <span aria-hidden="true">↗</span></a>
-      </header>
-
+    <div id="mobile-site" className={styles.page}>
       <section id="mobile-home" className={styles.hero} aria-labelledby="mobile-name">
-        <p className={styles.eyebrow}>HUMAN × AI / PORTFOLIO</p>
-        <h1 id="mobile-name" className={styles.name}>{PROFILE.englishName}<span>{PROFILE.name}</span></h1>
-        <p className={styles.role}>{PROFILE.role}</p>
-        <p className={styles.tagline}>{PROFILE.tagline}</p>
+        <h1 id="mobile-name" className="sr-only">{PROFILE.name} · 个人作品集</h1>
         <MobileVideo />
         <div className={styles.actions}>
           <a className={styles.primaryButton} href="#mobile-projects">查看作品 <span aria-hidden="true">↓</span></a>
@@ -103,14 +95,21 @@ function MobileVideo() {
     const video = videoRef.current;
     if (!video) return;
     const compactScreen = window.matchMedia(COMPACT_QUERY);
+    let introComplete = !document.getElementById('intro');
     let inView = false;
     const syncPlayback = () => {
-      if (!compactScreen.matches || !inView || document.hidden) {
+      // Prepare the visible mobile video behind the opening, but keep it at the start.
+      if (compactScreen.matches && inView && !document.hidden) video.preload = 'auto';
+      if (!compactScreen.matches || !introComplete || !inView || document.hidden) {
         video.pause();
         return;
       }
       // Muted inline autoplay; if the browser blocks it, keep the play button available.
       void video.play().catch(() => {});
+    };
+    const onIntroComplete = () => {
+      introComplete = true;
+      syncPlayback();
     };
     const observer = new IntersectionObserver(([entry]) => {
       const visible = entry.isIntersecting && entry.intersectionRatio >= 0.1;
@@ -119,10 +118,12 @@ function MobileVideo() {
       syncPlayback();
     }, { threshold: [0, 0.1] });
     observer.observe(video);
+    window.addEventListener('intro-animation-complete', onIntroComplete);
     document.addEventListener('visibilitychange', syncPlayback);
     compactScreen.addEventListener('change', syncPlayback);
     return () => {
       observer.disconnect();
+      window.removeEventListener('intro-animation-complete', onIntroComplete);
       document.removeEventListener('visibilitychange', syncPlayback);
       compactScreen.removeEventListener('change', syncPlayback);
       video.pause();

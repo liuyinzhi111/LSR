@@ -35,6 +35,7 @@ export default function ScrollHint() {
       armTimer();
     };
     window.addEventListener('intro-animation-complete', handleIntroComplete);
+    if (!document.getElementById('intro')) handleIntroComplete();
 
     return () => {
       clearTimer();
