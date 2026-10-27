@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { AI_PARTNERS, CONTACTS, CRAFT_INFRA, KEYWORDS, PROFILE, PROJECTS, RESUME_URL, SKILLS, type Tool } from './portfolio-content';
 import styles from './MobilePortfolio.module.css';
+import { COMPACT_QUERY } from './responsive';
 
 export default function MobilePortfolio() {
   return (
@@ -91,13 +92,29 @@ function MobileVideo() {
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    const observer = new IntersectionObserver(([entry]) => { if (!entry.isIntersecting) video.pause(); });
-    const pauseWhenHidden = () => { if (document.hidden) video.pause(); };
+    const compactScreen = window.matchMedia(COMPACT_QUERY);
+    let inView = false;
+    const syncPlayback = () => {
+      if (!compactScreen.matches || !inView || document.hidden) {
+        video.pause();
+        return;
+      }
+      // Muted inline autoplay; if the browser blocks it, keep the play button available.
+      void video.play().catch(() => {});
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      const visible = entry.isIntersecting && entry.intersectionRatio >= 0.1;
+      if (visible === inView) return;
+      inView = visible;
+      syncPlayback();
+    }, { threshold: [0, 0.1] });
     observer.observe(video);
-    document.addEventListener('visibilitychange', pauseWhenHidden);
+    document.addEventListener('visibilitychange', syncPlayback);
+    compactScreen.addEventListener('change', syncPlayback);
     return () => {
       observer.disconnect();
-      document.removeEventListener('visibilitychange', pauseWhenHidden);
+      document.removeEventListener('visibilitychange', syncPlayback);
+      compactScreen.removeEventListener('change', syncPlayback);
       video.pause();
     };
   }, []);
